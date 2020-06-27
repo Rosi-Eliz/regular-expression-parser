@@ -12,6 +12,7 @@ using namespace std;
 
 
 int main(int argc, const char * argv[]) {
-    FiniteAutomation automation("ab");
+    FiniteAutomation automation("ab*c+def*g", true, true);
+    automation.printFromInitialState();
     return 0;
 }

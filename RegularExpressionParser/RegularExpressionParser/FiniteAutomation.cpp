@@ -38,28 +38,25 @@ constructInitialStates(setInitialStates, setFinalStates);
 
 void FiniteAutomation::constructInitialStates(bool setInitialStates, bool setFinalStates)
 {
-    initialState = new State(setInitialStates,false);
-    initialEntryState = new State(false, false);
-    finalState = new State(false,setFinalStates);
-    finalEntryState = new State(false, false);
+    initialState = new State(setInitialStates,false, this);
+    initialEntryState = new State(false, false, this);
+    finalState = new State(false,setFinalStates, this);
+    finalEntryState = new State(false, false, this);
     
-    Edge* initialEpsilonTransition = new Edge(EPSILON, initialEntryState);
-    Edge* finalEpsilonTransition = new Edge(EPSILON, finalState);
+    Edge* initialEpsilonTransition = new Edge(string(1, EPSILON), initialEntryState);
+    Edge* finalEpsilonTransition = new Edge(string(1, EPSILON), finalState);
     initialState->setOutboundTransition(initialEpsilonTransition);
     finalEntryState->setOutboundTransition(finalEpsilonTransition);
 }
 
-
-
-
 StatesPair FiniteAutomation::baseStone(string symbol)
 {
-    State* initialState = new State(false, false);
-    State* finalState = new State(false, false);
-    State* symbolStartState = new State(false, false);
-    State* symbolEndState = new State(false, false);
-    Edge* inboundEpsilonTransition = new Edge(EPSILON, symbolStartState);
-    Edge* outboundEpsilonTransition = new Edge(EPSILON, finalState);
+    State* initialState = new State(false, false, this);
+    State* finalState = new State(false, false, this);
+    State* symbolStartState = new State(false, false, this);
+    State* symbolEndState = new State(false, false, this);
+    Edge* inboundEpsilonTransition = new Edge(string(1, EPSILON), symbolStartState);
+    Edge* outboundEpsilonTransition = new Edge(string(1, EPSILON), finalState);
     Edge* symbolEdge = new Edge(symbol, symbolEndState);
     initialState->setOutboundTransition(inboundEpsilonTransition);
     symbolStartState->setOutboundTransition(symbolEdge);
@@ -68,22 +65,33 @@ StatesPair FiniteAutomation::baseStone(string symbol)
     return StatesPair(initialState, finalState);
 }
 
-
+void FiniteAutomation::connectStates(State* fromState, State* toState)
+{
+    Edge* connectingEdge = new Edge(string(1, EPSILON), toState);
+    fromState->setOutboundTransition(connectingEdge);
+}
 
 State* FiniteAutomation::constructSubRegex(string subregex)
 {
     State *currentState = initialEntryState;
     if(subregex.size() > 1)
     {
-        for(int i{0}; i < subregex.size() - 1; i++)
+        for(int i{0}; i < subregex.size(); i++)
         {
-            if(subregex[i+1] == PLUS[0])
+            if(i == subregex.size() - 1) {
+                string copy = string(1, subregex[i]);
+                StatesPair pair = baseStone(copy);
+                connectStates(currentState, pair.initialState);
+                currentState = pair.finalState;
+                break;
+            }
+            if(subregex[i+1] == PLUS)
             {
                 string copy = string(1, subregex[i]);
                 currentState  = plus(currentState, copy);
             }
             
-            else if(subregex[i+1] == STAR[0])
+            else if(subregex[i+1] == STAR)
             {
                 string copy = string(1, subregex[i]);
                 currentState  = star(currentState, copy);
@@ -91,21 +99,44 @@ State* FiniteAutomation::constructSubRegex(string subregex)
             else{
                 string copy1 = string(1, subregex[i]);
                 string copy2 = string(1, subregex[i+1]);
-                currentState = conjunction(currentState, copy1, copy2);
+                if(regex.size() > i+2) {
+                    switch (subregex[i+2]) {
+                        case PLUS: {
+                            StatesPair pair = baseStone(copy1);
+                            connectStates(currentState, pair.initialState);
+                            currentState = plus(pair.finalState, copy2);
+                            i++;
+                            break;
+                        }
+                        case STAR: {
+                            StatesPair pair = baseStone(copy1);
+                            connectStates(currentState, pair.initialState);
+                            currentState = star(pair.finalState, copy2);
+                            i++;
+                            break;
+                        }
+                        default:
+                            currentState = conjunction(currentState, copy1, copy2);
+                            break;
+                    }
+                }
+                else
+                {
+                    currentState = conjunction(currentState, copy1, copy2);
+                }
             }
             i++;
-            
         }
     }
     else
     {
         StatesPair pair = baseStone(subregex);
-        Edge* connectingInitialEdge = new Edge(EPSILON, pair.initialState);
+        Edge* connectingInitialEdge = new Edge(string(1, EPSILON), pair.initialState);
         currentState->setOutboundTransition(connectingInitialEdge);
         currentState = pair.finalState;
         
     }
-    Edge* connectingFinalEdge = new Edge(EPSILON, finalEntryState);
+    Edge* connectingFinalEdge = new Edge(string(1, EPSILON), finalEntryState);
     currentState->setOutboundTransition(connectingFinalEdge);
     
     return currentState;
@@ -113,20 +144,14 @@ State* FiniteAutomation::constructSubRegex(string subregex)
 
 State* FiniteAutomation::conjunction(State* currentState, string first, string second)
 {
-
     StatesPair firstStonePair = baseStone(first);
-    Edge* initialConnectingEdge = new Edge(EPSILON, firstStonePair.initialState);
+    Edge* initialConnectingEdge = new Edge(string(1, EPSILON), firstStonePair.initialState);
     currentState->setOutboundTransition(initialConnectingEdge);
     
     StatesPair secondStonePair = baseStone(second);
-    Edge* twoStonesConnectingEdge = new Edge(EPSILON, secondStonePair.initialState);
-    firstStonePair.finalState->setOutboundTransition(twoStonesConnectingEdge);
+    connectStates(firstStonePair.finalState, secondStonePair.initialState);
     
-    State* finalState = new State(false, false);
-    Edge* finalConnectingEdge = new Edge(EPSILON, finalState);
-    secondStonePair.finalState->setOutboundTransition(finalConnectingEdge);
-    
-    return finalState;
+    return secondStonePair.finalState;
 }
 
 State* FiniteAutomation::disjunction(State* currentState, string first, string second){
@@ -138,23 +163,23 @@ State* FiniteAutomation::disjunction(State* currentState, string first, string s
     State* secondStoneInitialState = secondStonePair.initialState;
     State* secondStoneFinalState = secondStonePair.finalState;
     
-    State* connectingState = new State(false, false);
-    Edge* connectingEdge = new Edge(EPSILON, connectingState);
+    State* connectingState = new State(false, false, this);
+    Edge* connectingEdge = new Edge(string(1, EPSILON), connectingState);
     currentState->setOutboundTransition(connectingEdge);
     
-    Edge* firstEpsilonTransition = new Edge (EPSILON, firstStoneInitialState);
-    Edge* secondEpsilonTransition = new Edge(EPSILON, secondStoneInitialState);
+    Edge* firstEpsilonTransition = new Edge (string(1, EPSILON), firstStoneInitialState);
+    Edge* secondEpsilonTransition = new Edge(string(1, EPSILON), secondStoneInitialState);
     connectingState->setOutboundTransition(firstEpsilonTransition);
     connectingState->setOutboundTransition(secondEpsilonTransition);
     
-    State* connectingFinalState = new State(false, false);
-    Edge* firstFinalTransition = new Edge(EPSILON, connectingFinalState);
-    Edge* secondFinalTransition = new Edge(EPSILON, connectingFinalState);
+    State* connectingFinalState = new State(false, false, this);
+    Edge* firstFinalTransition = new Edge(string(1, EPSILON), connectingFinalState);
+    Edge* secondFinalTransition = new Edge(string(1, EPSILON), connectingFinalState);
     firstStoneFinalState->setOutboundTransition(firstFinalTransition);
     secondStoneFinalState->setOutboundTransition(secondFinalTransition);
     
-    State* finalState = new State(false, false);
-    Edge* finalTransition = new Edge(EPSILON, finalState);
+    State* finalState = new State(false, false, this);
+    Edge* finalTransition = new Edge(string(1, EPSILON), finalState);
     connectingFinalState->setOutboundTransition(finalTransition);
     
     return finalState;
@@ -166,17 +191,17 @@ State* FiniteAutomation::star(State* currentState, string word){
     State* symbolInitialState = pair.initialState;
     State* symbolFinalState = pair.finalState;
     
-    Edge* connectingEdge = new Edge(EPSILON, symbolInitialState);
+    Edge* connectingEdge = new Edge(string(1, EPSILON), symbolInitialState);
     currentState->setOutboundTransition(connectingEdge);
     
-    Edge* returnEdge = new Edge(EPSILON, symbolInitialState);
+    Edge* returnEdge = new Edge(string(1, EPSILON), symbolInitialState);
     symbolFinalState->setOutboundTransition(returnEdge);
-    Edge* skipEdge = new Edge(EPSILON, symbolFinalState);
+    Edge* skipEdge = new Edge(string(1, EPSILON), symbolFinalState);
     symbolInitialState->setOutboundTransition(skipEdge);
     
     
-    State* finalState = new State(false, false);
-    Edge* finalEdge = new Edge(EPSILON, finalState);
+    State* finalState = new State(false, false, this);
+    Edge* finalEdge = new Edge(string(1, EPSILON), finalState);
     symbolFinalState->setOutboundTransition(finalEdge);
     
     return finalState;
@@ -188,14 +213,14 @@ State* FiniteAutomation::plus(State* currentState, string word){
     State* symbolInitialState = pair.initialState;
     State* symbolFinalState = pair.finalState;
     
-    Edge* connectingEdge = new Edge(EPSILON, symbolInitialState);
+    Edge* connectingEdge = new Edge(string(1, EPSILON), symbolInitialState);
     currentState->setOutboundTransition(connectingEdge);
     
-    Edge* returnEdge = new Edge(EPSILON, symbolInitialState);
+    Edge* returnEdge = new Edge(string(1, EPSILON), symbolInitialState);
     symbolFinalState->setOutboundTransition(returnEdge);
     
-    State* finalState = new State(false, false);
-    Edge* finalEdge = new Edge(EPSILON, finalState);
+    State* finalState = new State(false, false, this);
+    Edge* finalEdge = new Edge(string(1, EPSILON), finalState);
     symbolFinalState->setOutboundTransition(finalEdge);
     
     return finalState;
@@ -204,4 +229,48 @@ State* FiniteAutomation::plus(State* currentState, string word){
 State* FiniteAutomation::getCurrentState() const
 {
     return currentState;
+}
+
+void FiniteAutomation::printFromState(State* currentState, unordered_map<State*, int>& map)
+{
+    if(currentState->isInitial)
+    {
+        cout<< "[start->";
+    }
+    else if(currentState->isFinal)
+    {
+        cout<<"("<<map[currentState]<<")->end]"<<endl;
+        return;
+    }
+    
+    vector<State*> recursiveBranchingStates;
+    for(Edge* edge : currentState->outboundTransitions)
+    {
+        State* toState = edge->toState;
+        int edgeNumber = 0;
+        if (map.find(toState)==map.end())
+        {
+            edgeNumber = static_cast<int>(map.size()) + 1;
+            map[toState] = edgeNumber;
+            recursiveBranchingStates.push_back(toState);
+        }
+        else
+        {
+            edgeNumber = map[toState];
+        }
+
+        cout<<"("<<map[currentState]<<")"<<"-"<<edge->symbol<<"->("<<edgeNumber<<")";
+    }
+    cout<<"] [";
+    
+    for(State* state : recursiveBranchingStates)
+    {
+        printFromState(state, map);
+    }
+}
+
+void FiniteAutomation::printFromInitialState() {
+    unordered_map<State*, int> map;
+    map[initialState] = 1;
+    printFromState(initialState,  map);
 }

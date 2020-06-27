@@ -10,10 +10,12 @@
 #define FiniteAutomation_h
 #include <vector>
 #include <string>
-#define EPSILON "#"
-#define OR "|"
-#define STAR "*"
-#define PLUS "+"
+#include <unordered_map>
+
+#define EPSILON '#'
+#define OR '|'
+#define STAR '*'
+#define PLUS '+'
 
 using namespace std;
 
@@ -38,7 +40,7 @@ struct State{
     FiniteAutomation* fromAutomation;
     vector<Edge*> outboundTransitions;
     State(bool isInitial, bool isFinal,FiniteAutomation* fromAutomation = nullptr) : isInitial(isInitial), isFinal(isFinal), fromAutomation(fromAutomation) {};
-
+    
     void setOutboundTransition(Edge* edge) {outboundTransitions.push_back(edge);};
     vector<Edge*> getOutboundTransitions() const {return outboundTransitions;};
     bool getIsInitial() const {return isInitial;};
@@ -59,22 +61,17 @@ class FiniteAutomation{
     State* disjunction(State* currentState, string first, string second);
     State* star(State* currentState, string word);
     State* plus(State* currentState, string word);
-    
+    void connectStates(State* fromState, State* toState);
     State* constructSubRegex(string subregex);
+    void printFromState(State* currentState, unordered_map<State*, int>& map);
     
 public:
-FiniteAutomation(string regex, bool setInitialStates = false, bool setFinalStates = false);
+    FiniteAutomation(string regex, bool setInitialStates = false, bool setFinalStates = false);
     bool wasAccepted(string regex);
-   State* getCurrentState() const;
+    State* getCurrentState() const;
+    void printFromInitialState();
 };
-
-
-
-
-
-
-
-
-
-
+    
+    
+    
 #endif /* FiniteAutomation_h */
