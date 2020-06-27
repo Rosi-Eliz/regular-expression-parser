@@ -18,6 +18,12 @@
 using namespace std;
 
 struct State;
+struct StatesPair {
+    State* initialState;
+    State* finalState;
+    StatesPair(State* initialState, State* finalState) : initialState(initialState), finalState(finalState) {}
+};
+
 struct Edge{
     string symbol;
     State* toState;
@@ -48,7 +54,7 @@ class FiniteAutomation{
     State* currentState;
     
     void constructInitialStates(bool setInitialStates, bool setFinalStates);
-    void baseStone(string symbol, State* initialState, State* finalState);
+    StatesPair baseStone(string symbol);
     State* conjunction(State* currentState, string first, string second);
     State* disjunction(State* currentState, string first, string second);
     State* star(State* currentState, string word);

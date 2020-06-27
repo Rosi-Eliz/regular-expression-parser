@@ -12,7 +12,6 @@ using namespace std;
 
 
 int main(int argc, const char * argv[]) {
-    FiniteAutomation automation("abc|sd|sd|dsdadsad|s|d|dsd");
-    
+    FiniteAutomation automation("ab");
     return 0;
 }
