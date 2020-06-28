@@ -74,10 +74,34 @@ void FiniteAutomation::connectStates(State* fromState, State* toState)
 State* FiniteAutomation::constructSubRegex(string subregex)
 {
     State *currentState = initialEntryState;
+
+    if(subregex.size() == 0)
+        throw runtime_error("Empty regex!");
+    
+    FiniteAutomation *nestedAutomation = nullptr;
+    if(subregex.find("(") != string::npos)
+    {
+        size_t firstIndex = subregex.find("(");
+        size_t lastIndex = subregex.find_last_of(")");
+        string nestedSubRegex = subregex.substr(firstIndex+1, lastIndex-1);
+        nestedAutomation = new FiniteAutomation(nestedSubRegex);
+        subregex = subregex.substr(lastIndex+1);
+    }
+    if(nestedAutomation != nullptr)
+    {
+        if(subregex[0] == PLUS)
+            currentState = plus(currentState, nestedAutomation);
+        if(subregex[0] == STAR)
+            currentState = star(currentState, nestedAutomation);
+        else
+            currentState = nestedAutomation->finalState;
+    }
+    
     if(subregex.size() > 1)
     {
         for(int i{0}; i < subregex.size(); i++)
         {
+            //ab*d
             if(i == subregex.size() - 1) {
                 string copy = string(1, subregex[i]);
                 StatesPair pair = baseStone(copy);
@@ -85,18 +109,19 @@ State* FiniteAutomation::constructSubRegex(string subregex)
                 currentState = pair.finalState;
                 break;
             }
+            
             if(subregex[i+1] == PLUS)
             {
                 string copy = string(1, subregex[i]);
                 currentState  = plus(currentState, copy);
             }
-            
             else if(subregex[i+1] == STAR)
             {
                 string copy = string(1, subregex[i]);
                 currentState  = star(currentState, copy);
             }
-            else{
+            else
+            {
                 string copy1 = string(1, subregex[i]);
                 string copy2 = string(1, subregex[i+1]);
                 if(regex.size() > i+2) {
@@ -131,13 +156,11 @@ State* FiniteAutomation::constructSubRegex(string subregex)
     else
     {
         StatesPair pair = baseStone(subregex);
-        Edge* connectingInitialEdge = new Edge(string(1, EPSILON), pair.initialState);
-        currentState->setOutboundTransition(connectingInitialEdge);
+        connectStates(currentState, pair.initialState);
         currentState = pair.finalState;
         
     }
-    Edge* connectingFinalEdge = new Edge(string(1, EPSILON), finalEntryState);
-    currentState->setOutboundTransition(connectingFinalEdge);
+    connectStates(currentState, finalEntryState);
     
     return currentState;
 }
@@ -273,4 +296,39 @@ void FiniteAutomation::printFromInitialState() {
     unordered_map<State*, int> map;
     map[initialState] = 1;
     printFromState(initialState,  map);
+}
+
+//FA Operations
+
+State* FiniteAutomation::conjunction(State* currentState, FiniteAutomation* automation1, FiniteAutomation* automation2)
+{
+    connectStates(currentState, automation1->initialState);
+    connectStates(automation1->finalState, automation2->initialState);
+    return automation2->finalState;
+}
+
+
+State* FiniteAutomation::disjunction(State* currentState, FiniteAutomation* automation1, FiniteAutomation* automation2)
+{
+    connectStates(currentState, automation1->initialState);
+    connectStates(currentState, automation2->initialState);
+    State* finalConnectingState = new State(false, false);
+    connectStates(automation1->finalState, finalConnectingState);
+    connectStates(automation2->finalState, finalConnectingState);
+    return finalConnectingState;
+}
+
+  State* FiniteAutomation::star(State* currentState, FiniteAutomation* automation)
+{
+    connectStates(currentState, automation->initialState);
+    connectStates(automation->initialEntryState, automation->finalEntryState);
+      connectStates(automation->finalEntryState, automation->initialEntryState);
+    return automation->finalState;
+}
+
+ State* FiniteAutomation::plus(State* currentState, FiniteAutomation* automation)
+{
+    connectStates(currentState, automation->initialState);
+    connectStates(automation->initialEntryState, automation->finalEntryState);
+    return automation->finalState;
 }

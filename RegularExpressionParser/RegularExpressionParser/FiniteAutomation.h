@@ -65,11 +65,18 @@ class FiniteAutomation{
     State* constructSubRegex(string subregex);
     void printFromState(State* currentState, unordered_map<State*, int>& map);
     
+    //Operations
+    
+    State* conjunction(State* currentState, FiniteAutomation* automation1, FiniteAutomation* automation2);
+    State* disjunction(State* currentState, FiniteAutomation* automation1, FiniteAutomation* automation2);
+    State* star(State* currentState, FiniteAutomation* automation);
+    State* plus(State* currentState, FiniteAutomation* automation);
 public:
     FiniteAutomation(string regex, bool setInitialStates = false, bool setFinalStates = false);
     bool wasAccepted(string regex);
     State* getCurrentState() const;
     void printFromInitialState();
+
 };
     
     

@@ -7,142 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "13153260-8870-4F8E-977C-B2FCFF9B9888"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "RegularExpressionParser/FiniteAutomation.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "37"
-            endingLineNumber = "37"
-            landmarkName = "FiniteAutomation::FiniteAutomation(regex, setInitialStates, setFinalStates)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "13153260-8870-4F8E-977C-B2FCFF9B9888 - 8cfa3d94a6a9aebb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "FiniteAutomation::FiniteAutomation(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;, bool, bool)"
-                  moduleName = "RegularExpressionParser"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/rosie.elize/Programming/Repositories/regular-expression-parser/RegularExpressionParser/RegularExpressionParser/FiniteAutomation.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "37"
-                  endingLineNumber = "37"
-                  offsetFromSymbolStart = "335">
-               </Location>
-               <Location
-                  uuid = "13153260-8870-4F8E-977C-B2FCFF9B9888 - 8cfa3d94a6a9aebb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "FiniteAutomation::FiniteAutomation(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;, bool, bool)"
-                  moduleName = "RegularExpressionParser"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/rosie.elize/Programming/Repositories/regular-expression-parser/RegularExpressionParser/RegularExpressionParser/FiniteAutomation.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "37"
-                  endingLineNumber = "37"
-                  offsetFromSymbolStart = "347">
-               </Location>
-               <Location
-                  uuid = "13153260-8870-4F8E-977C-B2FCFF9B9888 - 8cfa3d94a6a9aebb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "FiniteAutomation::FiniteAutomation(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;, bool, bool)"
-                  moduleName = "RegularExpressionParser"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/rosie.elize/Programming/Repositories/regular-expression-parser/RegularExpressionParser/RegularExpressionParser/FiniteAutomation.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "37"
-                  endingLineNumber = "37"
-                  offsetFromSymbolStart = "466">
-               </Location>
-               <Location
-                  uuid = "13153260-8870-4F8E-977C-B2FCFF9B9888 - 8cfa3d94a6a9aebb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "FiniteAutomation::FiniteAutomation(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;, bool, bool)"
-                  moduleName = "RegularExpressionParser"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/rosie.elize/Programming/Repositories/regular-expression-parser/RegularExpressionParser/RegularExpressionParser/FiniteAutomation.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "37"
-                  endingLineNumber = "37"
-                  offsetFromSymbolStart = "50">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B80B94C5-E926-4050-9C14-FB0D549E1E3C"
+            uuid = "841DA2FE-1FEF-4B39-A54E-B89304FF5958"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RegularExpressionParser/FiniteAutomation.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "128"
-            endingLineNumber = "128"
-            landmarkName = "FiniteAutomation::conjunction(currentState, first, second)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "1DC84166-B284-4ED6-ACAC-B0DE1F734D04"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "RegularExpressionParser/FiniteAutomation.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
-            landmarkName = "FiniteAutomation::constructSubRegex(subregex)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "1425C08E-09C4-4504-B91D-B2B6AE819DC7"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "RegularExpressionParser/FiniteAutomation.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
-            landmarkName = "FiniteAutomation::constructSubRegex(subregex)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "31F53BCB-5F47-4109-8813-26B8BABAC303"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "RegularExpressionParser/FiniteAutomation.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "129"
-            endingLineNumber = "129"
-            landmarkName = "FiniteAutomation::conjunction(currentState, first, second)"
+            startingLineNumber = "183"
+            endingLineNumber = "183"
+            landmarkName = "FiniteAutomation::disjunction(currentState, first, second)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
