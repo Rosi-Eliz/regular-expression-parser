@@ -13,27 +13,10 @@
 using namespace std;
 
 FiniteAutomation::FiniteAutomation(string regex, bool setInitialStates, bool setFinalStates) {
-constructInitialStates(setInitialStates, setFinalStates);
+    constructInitialStates(setInitialStates, setFinalStates);
     this->regex = regex;
+    constructRegex(regex);
     
-    
-    if(regex.find(OR) != string::npos)
-    {
-        size_t searchStartIndex = 0;
-        while(regex.find(OR, searchStartIndex) != string::npos){
-            size_t index = regex.find(OR, searchStartIndex);
-            string subRegex = regex.substr(searchStartIndex, index - searchStartIndex );
-            searchStartIndex = index + 1;
-            cout<<subRegex<<endl;
-            
-        }
-        string finalPortion = regex.substr(searchStartIndex);
-        cout<<finalPortion<<endl;
-    }
-    else
-    {
-        constructSubRegex(regex);
-    }
 }
 
 void FiniteAutomation::constructInitialStates(bool setInitialStates, bool setFinalStates)
@@ -71,10 +54,10 @@ void FiniteAutomation::connectStates(State* fromState, State* toState)
     fromState->setOutboundTransition(connectingEdge);
 }
 
-State* FiniteAutomation::constructSubRegex(string subregex)
+void FiniteAutomation::constructRegex(string subregex)
 {
     State *currentState = initialEntryState;
-
+    
     if(subregex.size() == 0)
         throw runtime_error("Empty regex!");
     
@@ -82,6 +65,9 @@ State* FiniteAutomation::constructSubRegex(string subregex)
     if(subregex.find("(") != string::npos)
     {
         size_t firstIndex = subregex.find("(");
+        if(subregex.find(")") == string::npos)
+            throw runtime_error("Missing bracket!");
+        
         size_t lastIndex = subregex.find_last_of(")");
         string nestedSubRegex = subregex.substr(firstIndex+1, lastIndex-1);
         nestedAutomation = new FiniteAutomation(nestedSubRegex);
@@ -90,18 +76,103 @@ State* FiniteAutomation::constructSubRegex(string subregex)
     if(nestedAutomation != nullptr)
     {
         if(subregex[0] == PLUS)
+        {
+            State* oldCurrentState = currentState;
             currentState = plus(currentState, nestedAutomation);
-        if(subregex[0] == STAR)
+            subregex = subregex.substr(1);
+            if(subregex.size() > 0 && subregex[1] == OR)
+            {
+                FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
+                connectStates(oldCurrentState, rightAutomation->initialState);
+                State* finalConnectingState = new State(false, false);
+                connectStates(currentState, finalConnectingState);
+                connectStates(rightAutomation->finalState, finalConnectingState);
+                currentState = finalConnectingState;
+            }
+            else if(subregex.size() > 0)
+            {
+                FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
+                connectStates(currentState, rightAutomation->initialState);
+                currentState = rightAutomation->finalState;
+            }
+        }
+        else if(subregex[0] == STAR)
+        {
+            State* oldCurrentState = currentState;
             currentState = star(currentState, nestedAutomation);
+            subregex = subregex.substr(1);
+            
+            if(subregex.size() > 0 && subregex[1] == OR)
+            {
+                FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
+                connectStates(oldCurrentState, rightAutomation->initialState);
+                State* finalConnectingState = new State(false, false);
+                connectStates(currentState, finalConnectingState);
+                connectStates(rightAutomation->finalState, finalConnectingState);
+                currentState = finalConnectingState;
+            }
+            else if(subregex.size() > 0)
+            {
+                FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
+                connectStates(currentState, rightAutomation->initialState);
+                currentState = rightAutomation->finalState;
+            }
+            
+        }
+        else if(subregex[0] == OR)
+        {
+            subregex = subregex.substr(1);
+            FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
+            currentState = disjunction(currentState, nestedAutomation, rightAutomation);
+            
+        }
         else
-            currentState = nestedAutomation->finalState;
+        {
+            subregex = subregex.substr(1);
+            FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
+            currentState = conjunction(currentState, nestedAutomation, rightAutomation);
+        }
     }
-    
+    else
+    {
+        if(regex.find(OR) != string::npos)
+        {
+            //abbc|d*t|c
+            vector<FiniteAutomation*> processedNestedAutomations;
+            size_t searchStartIndex = 0;
+            while(regex.find(OR, searchStartIndex) != string::npos){
+                size_t index = regex.find(OR, searchStartIndex);
+                string subRegex = regex.substr(searchStartIndex, index - searchStartIndex );
+                searchStartIndex = index + 1;
+                FiniteAutomation* rightAutomation = new FiniteAutomation(subRegex);
+                processedNestedAutomations.push_back(rightAutomation);
+            }
+            string finalPortion = regex.substr(searchStartIndex);
+            FiniteAutomation* rightAutomation = new FiniteAutomation(finalPortion);
+            processedNestedAutomations.push_back(rightAutomation);
+            
+            State* finalDisjunctionState = new State(false, false);
+            for(int i{0}; i < processedNestedAutomations.size(); i++)
+            {
+                connectStates(currentState, processedNestedAutomations[i]->initialState);
+                connectStates(processedNestedAutomations[i]->finalState, finalDisjunctionState);
+            }
+            currentState = finalDisjunctionState;
+        }
+        else
+        {
+            currentState = constructFlatRegex(currentState, regex);
+        }
+    }
+    connectStates(currentState, finalEntryState);
+}
+
+State* FiniteAutomation::constructFlatRegex(State* currentState, string subregex)
+{
     if(subregex.size() > 1)
     {
         for(int i{0}; i < subregex.size(); i++)
         {
-            //ab*d
             if(i == subregex.size() - 1) {
                 string copy = string(1, subregex[i]);
                 StatesPair pair = baseStone(copy);
@@ -160,11 +231,8 @@ State* FiniteAutomation::constructSubRegex(string subregex)
         currentState = pair.finalState;
         
     }
-    connectStates(currentState, finalEntryState);
-    
     return currentState;
 }
-
 State* FiniteAutomation::conjunction(State* currentState, string first, string second)
 {
     StatesPair firstStonePair = baseStone(first);
@@ -281,7 +349,7 @@ void FiniteAutomation::printFromState(State* currentState, unordered_map<State*,
         {
             edgeNumber = map[toState];
         }
-
+        
         cout<<"("<<map[currentState]<<")"<<"-"<<edge->symbol<<"->("<<edgeNumber<<")";
     }
     cout<<"] [";
@@ -318,15 +386,15 @@ State* FiniteAutomation::disjunction(State* currentState, FiniteAutomation* auto
     return finalConnectingState;
 }
 
-  State* FiniteAutomation::star(State* currentState, FiniteAutomation* automation)
+State* FiniteAutomation::star(State* currentState, FiniteAutomation* automation)
 {
     connectStates(currentState, automation->initialState);
     connectStates(automation->initialEntryState, automation->finalEntryState);
-      connectStates(automation->finalEntryState, automation->initialEntryState);
+    connectStates(automation->finalEntryState, automation->initialEntryState);
     return automation->finalState;
 }
 
- State* FiniteAutomation::plus(State* currentState, FiniteAutomation* automation)
+State* FiniteAutomation::plus(State* currentState, FiniteAutomation* automation)
 {
     connectStates(currentState, automation->initialState);
     connectStates(automation->initialEntryState, automation->finalEntryState);

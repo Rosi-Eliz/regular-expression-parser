@@ -62,7 +62,8 @@ class FiniteAutomation{
     State* star(State* currentState, string word);
     State* plus(State* currentState, string word);
     void connectStates(State* fromState, State* toState);
-    State* constructSubRegex(string subregex);
+    void constructRegex(string subregex);
+    State* constructFlatRegex(State* currentState, string subregex);
     void printFromState(State* currentState, unordered_map<State*, int>& map);
     
     //Operations

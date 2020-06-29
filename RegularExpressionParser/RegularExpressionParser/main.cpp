@@ -12,7 +12,7 @@ using namespace std;
 
 
 int main(int argc, const char * argv[]) {
-    FiniteAutomation automation("(ab*)", true, true);
+    FiniteAutomation automation("(ab)|c", true, true);
     automation.printFromInitialState();
     return 0;
 }
