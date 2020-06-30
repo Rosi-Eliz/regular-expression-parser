@@ -16,6 +16,7 @@
 #define OR '|'
 #define STAR '*'
 #define PLUS '+'
+enum Operation {Plus, Star};
 
 using namespace std;
 
@@ -32,6 +33,13 @@ struct Edge{
     Edge(string symbol, State* toState) : symbol(symbol), toState(toState) {};
     State* getToState() const{return toState;};
 };
+
+struct PairOfIndices{
+    int start;
+    int end;
+    PairOfIndices(int start, int end) : start(start), end(end) {};
+};
+
 
 class FiniteAutomation;
 struct State{
@@ -62,6 +70,11 @@ class FiniteAutomation{
     State* star(State* currentState, string word);
     State* plus(State* currentState, string word);
     void connectStates(State* fromState, State* toState);
+    vector<PairOfIndices> topLevelBrackets(string input);
+    int closingBracketIndex(int index, string input);
+    bool isInBracketRange(int index, vector<PairOfIndices> pairs);
+    vector<string> topLevelDisjunctions(string input);
+    void repetition(State* currentState, string subregex, FiniteAutomation* nestedAutomation, Operation operation);
     void constructRegex(string subregex);
     State* constructFlatRegex(State* currentState, string subregex);
     void printFromState(State* currentState, unordered_map<State*, int>& map);

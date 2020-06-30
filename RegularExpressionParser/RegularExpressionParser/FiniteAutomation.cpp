@@ -13,6 +13,9 @@
 using namespace std;
 
 FiniteAutomation::FiniteAutomation(string regex, bool setInitialStates, bool setFinalStates) {
+    
+    vector<string> result = topLevelDisjunctions("adsad|sad(asd|(ds|d*))|sd");
+    
     constructInitialStates(setInitialStates, setFinalStates);
     this->regex = regex;
     constructRegex(regex);
@@ -54,6 +57,98 @@ void FiniteAutomation::connectStates(State* fromState, State* toState)
     fromState->setOutboundTransition(connectingEdge);
 }
 
+void FiniteAutomation::repetition(State* currentState, string subregex, FiniteAutomation* nestedAutomation,Operation operation)
+{
+    State* oldCurrentState = currentState;
+    switch(operation)
+    {
+        case Plus:  currentState = plus(currentState, nestedAutomation); break;
+        case Star:  currentState = star(currentState, nestedAutomation); break;
+    }
+    subregex = subregex.substr(1);
+    if(subregex.size() > 0 && subregex[1] == OR)
+    {
+        FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
+        connectStates(oldCurrentState, rightAutomation->initialState);
+        State* finalConnectingState = new State(false, false);
+        connectStates(currentState, finalConnectingState);
+        connectStates(rightAutomation->finalState, finalConnectingState);
+        currentState = finalConnectingState;
+    }
+    else if(subregex.size() > 0)
+    {
+        FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
+        connectStates(currentState, rightAutomation->initialState);
+        currentState = rightAutomation->finalState;
+    }
+}
+
+vector<PairOfIndices> FiniteAutomation::topLevelBrackets(string input)
+{
+    vector<PairOfIndices> result;
+    for(int i{0}; i < input.size(); i++)
+    {
+        if(input[i] == '(')
+        {
+            int closingIndex = closingBracketIndex(i, input);
+            PairOfIndices pair = PairOfIndices(i, closingIndex);
+            result.push_back(pair);
+            i = closingIndex;
+        }
+    }
+    return result;
+}
+
+int FiniteAutomation::closingBracketIndex(int index, string input)
+{
+    int nestedBrackets{0};
+    for(int i{index + 1}; i < input.size(); i++)
+    {
+        if(input[i] == '(')
+                nestedBrackets++;
+        else if(input[i] == ')' && nestedBrackets > 0)
+            nestedBrackets--;
+        else if(input[i] == ')')
+            return i;
+    }
+    throw runtime_error("Invalid regex!");
+}
+
+bool FiniteAutomation::isInBracketRange(int index, vector<PairOfIndices> pairs)
+{
+    for(int i{0}; i < pairs.size(); i++)
+    {
+        if(index >= pairs[i].start && index <= pairs[i].end)
+            return true;
+    }
+    return false;
+}
+
+vector<string> FiniteAutomation::topLevelDisjunctions(string input)
+{
+    vector<string> result;
+    vector<PairOfIndices> brackets = topLevelBrackets(input);
+    vector<int> disjunctionIndices;
+    for(int i{0}; i < input.size(); i++)
+    {
+        if(input[i] == OR && !isInBracketRange(i, brackets))
+            disjunctionIndices.push_back(i);
+    }
+    int previousSubStringEndIndex = 0;
+    for(int i{0}; i < disjunctionIndices.size(); i++)
+    {
+        string substring = input.substr(previousSubStringEndIndex, disjunctionIndices[i]);
+        previousSubStringEndIndex = disjunctionIndices[i] + 1;
+        result.push_back(substring);
+        if(i == disjunctionIndices.size() - 1)
+        {
+            string lastPortion = input.substr(previousSubStringEndIndex);
+            result.push_back(lastPortion);
+        }
+    }
+    return result;
+}
+
 void FiniteAutomation::constructRegex(string subregex)
 {
     State *currentState = initialEntryState;
@@ -61,10 +156,13 @@ void FiniteAutomation::constructRegex(string subregex)
     if(subregex.size() == 0)
         throw runtime_error("Empty regex!");
     
+    //asd(a|b)hg
     FiniteAutomation *nestedAutomation = nullptr;
     if(subregex.find("(") != string::npos)
     {
         size_t firstIndex = subregex.find("(");
+        string leftPart = subregex.substr(0, firstIndex);
+        
         if(subregex.find(")") == string::npos)
             throw runtime_error("Missing bracket!");
         
@@ -77,47 +175,12 @@ void FiniteAutomation::constructRegex(string subregex)
     {
         if(subregex[0] == PLUS)
         {
-            State* oldCurrentState = currentState;
-            currentState = plus(currentState, nestedAutomation);
-            subregex = subregex.substr(1);
-            if(subregex.size() > 0 && subregex[1] == OR)
-            {
-                FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
-                connectStates(oldCurrentState, rightAutomation->initialState);
-                State* finalConnectingState = new State(false, false);
-                connectStates(currentState, finalConnectingState);
-                connectStates(rightAutomation->finalState, finalConnectingState);
-                currentState = finalConnectingState;
-            }
-            else if(subregex.size() > 0)
-            {
-                FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
-                connectStates(currentState, rightAutomation->initialState);
-                currentState = rightAutomation->finalState;
-            }
+            repetition(currentState, subregex, nestedAutomation, Operation::Plus);
+            //as|((c|d)bbdf)*bf(af)d
         }
         else if(subregex[0] == STAR)
         {
-            State* oldCurrentState = currentState;
-            currentState = star(currentState, nestedAutomation);
-            subregex = subregex.substr(1);
-            
-            if(subregex.size() > 0 && subregex[1] == OR)
-            {
-                FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
-                connectStates(oldCurrentState, rightAutomation->initialState);
-                State* finalConnectingState = new State(false, false);
-                connectStates(currentState, finalConnectingState);
-                connectStates(rightAutomation->finalState, finalConnectingState);
-                currentState = finalConnectingState;
-            }
-            else if(subregex.size() > 0)
-            {
-                FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
-                connectStates(currentState, rightAutomation->initialState);
-                currentState = rightAutomation->finalState;
-            }
-            
+             repetition(currentState, subregex, nestedAutomation, Operation::Star);
         }
         else if(subregex[0] == OR)
         {
