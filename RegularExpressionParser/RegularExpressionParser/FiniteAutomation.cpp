@@ -39,13 +39,13 @@ StatesPair FiniteAutomation::baseStone(string symbol)
 {
     State* initialState = new State(false, false, this);
     State* finalState = new State(false, false, this);
-    State* symbolStartState = new State(false, false, this);
+    State* symbolasterisktState = new State(false, false, this);
     State* symbolEndState = new State(false, false, this);
-    Edge* inboundEpsilonTransition = new Edge(string(1, EPSILON), symbolStartState);
+    Edge* inboundEpsilonTransition = new Edge(string(1, EPSILON), symbolasterisktState);
     Edge* outboundEpsilonTransition = new Edge(string(1, EPSILON), finalState);
     Edge* symbolEdge = new Edge(symbol, symbolEndState);
     initialState->setOutboundTransition(inboundEpsilonTransition);
-    symbolStartState->setOutboundTransition(symbolEdge);
+    symbolasterisktState->setOutboundTransition(symbolEdge);
     symbolEndState->setOutboundTransition(outboundEpsilonTransition);
     
     return StatesPair(initialState, finalState);
@@ -63,7 +63,7 @@ void FiniteAutomation::repetition(State* currentState, string subregex, FiniteAu
     switch(operation)
     {
         case Plus:  currentState = plus(currentState, nestedAutomation); break;
-        case Star:  currentState = star(currentState, nestedAutomation); break;
+        case Asterisk:  currentState = asterisk(currentState, nestedAutomation); break;
     }
     subregex = subregex.substr(1);
     if(subregex.size() > 0 && subregex[1] == OR)
@@ -178,9 +178,9 @@ void FiniteAutomation::constructRegex(string subregex)
             repetition(currentState, subregex, nestedAutomation, Operation::Plus);
             //as|((c|d)bbdf)*bf(af)d
         }
-        else if(subregex[0] == STAR)
+        else if(subregex[0] == ASTERISK)
         {
-             repetition(currentState, subregex, nestedAutomation, Operation::Star);
+             repetition(currentState, subregex, nestedAutomation, Operation::Asterisk);
         }
         else if(subregex[0] == OR)
         {
@@ -202,15 +202,15 @@ void FiniteAutomation::constructRegex(string subregex)
         {
             //abbc|d*t|c
             vector<FiniteAutomation*> processedNestedAutomations;
-            size_t searchStartIndex = 0;
-            while(regex.find(OR, searchStartIndex) != string::npos){
-                size_t index = regex.find(OR, searchStartIndex);
-                string subRegex = regex.substr(searchStartIndex, index - searchStartIndex );
-                searchStartIndex = index + 1;
+            size_t searchasterisktIndex = 0;
+            while(regex.find(OR, searchasterisktIndex) != string::npos){
+                size_t index = regex.find(OR, searchasterisktIndex);
+                string subRegex = regex.substr(searchasterisktIndex, index - searchasterisktIndex );
+                searchasterisktIndex = index + 1;
                 FiniteAutomation* rightAutomation = new FiniteAutomation(subRegex);
                 processedNestedAutomations.push_back(rightAutomation);
             }
-            string finalPortion = regex.substr(searchStartIndex);
+            string finalPortion = regex.substr(searchasterisktIndex);
             FiniteAutomation* rightAutomation = new FiniteAutomation(finalPortion);
             processedNestedAutomations.push_back(rightAutomation);
             
@@ -249,10 +249,10 @@ State* FiniteAutomation::constructFlatRegex(State* currentState, string subregex
                 string copy = string(1, subregex[i]);
                 currentState  = plus(currentState, copy);
             }
-            else if(subregex[i+1] == STAR)
+            else if(subregex[i+1] == ASTERISK)
             {
                 string copy = string(1, subregex[i]);
-                currentState  = star(currentState, copy);
+                currentState  = asterisk(currentState, copy);
             }
             else
             {
@@ -267,10 +267,10 @@ State* FiniteAutomation::constructFlatRegex(State* currentState, string subregex
                             i++;
                             break;
                         }
-                        case STAR: {
+                        case ASTERISK: {
                             StatesPair pair = baseStone(copy1);
                             connectStates(currentState, pair.initialState);
-                            currentState = star(pair.finalState, copy2);
+                            currentState = asterisk(pair.finalState, copy2);
                             i++;
                             break;
                         }
@@ -339,7 +339,7 @@ State* FiniteAutomation::disjunction(State* currentState, string first, string s
     return finalState;
 }
 
-State* FiniteAutomation::star(State* currentState, string word){
+State* FiniteAutomation::asterisk(State* currentState, string word){
     
     StatesPair pair = baseStone(word);
     State* symbolInitialState = pair.initialState;
@@ -389,7 +389,7 @@ void FiniteAutomation::printFromState(State* currentState, unordered_map<State*,
 {
     if(currentState->isInitial)
     {
-        cout<< "[start->";
+        cout<< "[asteriskt->";
     }
     else if(currentState->isFinal)
     {
@@ -449,7 +449,7 @@ State* FiniteAutomation::disjunction(State* currentState, FiniteAutomation* auto
     return finalConnectingState;
 }
 
-State* FiniteAutomation::star(State* currentState, FiniteAutomation* automation)
+State* FiniteAutomation::asterisk(State* currentState, FiniteAutomation* automation)
 {
     connectStates(currentState, automation->initialState);
     connectStates(automation->initialEntryState, automation->finalEntryState);

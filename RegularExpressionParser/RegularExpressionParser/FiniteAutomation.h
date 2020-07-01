@@ -14,9 +14,9 @@
 
 #define EPSILON '#'
 #define OR '|'
-#define STAR '*'
+#define ASTERISK '*'
 #define PLUS '+'
-enum Operation {Plus, Star};
+enum Operation {Plus, Asterisk};
 
 using namespace std;
 
@@ -67,7 +67,7 @@ class FiniteAutomation{
     StatesPair baseStone(string symbol);
     State* conjunction(State* currentState, string first, string second);
     State* disjunction(State* currentState, string first, string second);
-    State* star(State* currentState, string word);
+    State* asterisk(State* currentState, string word);
     State* plus(State* currentState, string word);
     void connectStates(State* fromState, State* toState);
     vector<PairOfIndices> topLevelBrackets(string input);
@@ -83,7 +83,7 @@ class FiniteAutomation{
     
     State* conjunction(State* currentState, FiniteAutomation* automation1, FiniteAutomation* automation2);
     State* disjunction(State* currentState, FiniteAutomation* automation1, FiniteAutomation* automation2);
-    State* star(State* currentState, FiniteAutomation* automation);
+    State* asterisk(State* currentState, FiniteAutomation* automation);
     State* plus(State* currentState, FiniteAutomation* automation);
 public:
     FiniteAutomation(string regex, bool setInitialStates = false, bool setFinalStates = false);
