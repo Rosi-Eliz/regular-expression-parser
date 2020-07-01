@@ -39,13 +39,13 @@ StatesPair FiniteAutomation::baseStone(string symbol)
 {
     State* initialState = new State(false, false, this);
     State* finalState = new State(false, false, this);
-    State* symbolasterisktState = new State(false, false, this);
+    State* symbolStartState = new State(false, false, this);
     State* symbolEndState = new State(false, false, this);
-    Edge* inboundEpsilonTransition = new Edge(string(1, EPSILON), symbolasterisktState);
+    Edge* inboundEpsilonTransition = new Edge(string(1, EPSILON), symbolStartState);
     Edge* outboundEpsilonTransition = new Edge(string(1, EPSILON), finalState);
     Edge* symbolEdge = new Edge(symbol, symbolEndState);
     initialState->setOutboundTransition(inboundEpsilonTransition);
-    symbolasterisktState->setOutboundTransition(symbolEdge);
+    symbolStartState->setOutboundTransition(symbolEdge);
     symbolEndState->setOutboundTransition(outboundEpsilonTransition);
     
     return StatesPair(initialState, finalState);
@@ -105,7 +105,7 @@ int FiniteAutomation::closingBracketIndex(int index, string input)
     for(int i{index + 1}; i < input.size(); i++)
     {
         if(input[i] == '(')
-                nestedBrackets++;
+            nestedBrackets++;
         else if(input[i] == ')' && nestedBrackets > 0)
             nestedBrackets--;
         else if(input[i] == ')')
@@ -149,85 +149,78 @@ vector<string> FiniteAutomation::topLevelDisjunctions(string input)
     return result;
 }
 
+
 void FiniteAutomation::constructRegex(string subregex)
 {
     State *currentState = initialEntryState;
-    
-    if(subregex.size() == 0)
-        throw runtime_error("Empty regex!");
-    
-    //asd(a|b)hg
-    FiniteAutomation *nestedAutomation = nullptr;
-    if(subregex.find("(") != string::npos)
+    vector<string> disjunctions = topLevelDisjunctions(subregex);
+    if(!disjunctions.empty())
     {
-        size_t firstIndex = subregex.find("(");
-        string leftPart = subregex.substr(0, firstIndex);
-        
-        if(subregex.find(")") == string::npos)
-            throw runtime_error("Missing bracket!");
-        
-        size_t lastIndex = subregex.find_last_of(")");
-        string nestedSubRegex = subregex.substr(firstIndex+1, lastIndex-1);
-        nestedAutomation = new FiniteAutomation(nestedSubRegex);
-        subregex = subregex.substr(lastIndex+1);
-    }
-    if(nestedAutomation != nullptr)
-    {
-        if(subregex[0] == PLUS)
+        State* commonFinalState = new State(false, false);
+        for(int i{0}; i < disjunctions.size(); i++)
         {
-            repetition(currentState, subregex, nestedAutomation, Operation::Plus);
-            //as|((c|d)bbdf)*bf(af)d
+            FiniteAutomation* automation = new FiniteAutomation(disjunctions[i]);
+            connectStates(initialEntryState, automation->initialState);
+            connectStates(automation->finalState, commonFinalState);
         }
-        else if(subregex[0] == ASTERISK)
-        {
-             repetition(currentState, subregex, nestedAutomation, Operation::Asterisk);
-        }
-        else if(subregex[0] == OR)
-        {
-            subregex = subregex.substr(1);
-            FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
-            currentState = disjunction(currentState, nestedAutomation, rightAutomation);
-            
-        }
-        else
-        {
-            subregex = subregex.substr(1);
-            FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
-            currentState = conjunction(currentState, nestedAutomation, rightAutomation);
-        }
+        connectStates(commonFinalState, finalEntryState);
+        currentState = commonFinalState;
     }
     else
     {
-        if(regex.find(OR) != string::npos)
+        for(int i{0}; i < subregex.size(); i++)
         {
-            //abbc|d*t|c
-            vector<FiniteAutomation*> processedNestedAutomations;
-            size_t searchasterisktIndex = 0;
-            while(regex.find(OR, searchasterisktIndex) != string::npos){
-                size_t index = regex.find(OR, searchasterisktIndex);
-                string subRegex = regex.substr(searchasterisktIndex, index - searchasterisktIndex );
-                searchasterisktIndex = index + 1;
-                FiniteAutomation* rightAutomation = new FiniteAutomation(subRegex);
-                processedNestedAutomations.push_back(rightAutomation);
-            }
-            string finalPortion = regex.substr(searchasterisktIndex);
-            FiniteAutomation* rightAutomation = new FiniteAutomation(finalPortion);
-            processedNestedAutomations.push_back(rightAutomation);
-            
-            State* finalDisjunctionState = new State(false, false);
-            for(int i{0}; i < processedNestedAutomations.size(); i++)
+            switch(subregex[i])
             {
-                connectStates(currentState, processedNestedAutomations[i]->initialState);
-                connectStates(processedNestedAutomations[i]->finalState, finalDisjunctionState);
+                case '(' :
+                {
+                    int closingBracketPosition = closingBracketIndex(i, subregex);
+                    string nestedSubstring = subregex.substr(i+1, closingBracketPosition - (i+1));
+                    FiniteAutomation* automation = new FiniteAutomation(nestedSubstring);
+                    i = closingBracketPosition;
+                    
+                    if(i < subregex.size() - 1 && subregex[i + 1] == PLUS)
+                    {
+                        currentState = plus(currentState, automation);
+                        i++;
+                    }
+                    else if(i < subregex.size() - 1 && subregex[i + 1] == ASTERISK)
+                    {
+                        currentState = asterisk(currentState, automation);
+                        i++;
+                    }
+                    else
+                    {
+                        connectStates(currentState, automation->initialState);
+                        currentState = automation->finalState;
+                    }
+                    break;
+                }
+                default :
+                {
+                    if(i < subregex.size() - 1)
+                    {
+                        if(subregex[i + 1] == PLUS)
+                        {
+                            currentState = plus(currentState, string(1,subregex[i]));
+                            i++;
+                            break;
+                        }
+                        if(subregex[i + 1] == ASTERISK)
+                        {
+                            currentState = asterisk(currentState, string(1,subregex[i]));
+                            i++;
+                            break;
+                        }
+                    }
+                    StatesPair pair = baseStone(string(1,subregex[i]));
+                    connectStates(currentState, pair.initialState);
+                    currentState = pair.finalState;
+                }
             }
-            currentState = finalDisjunctionState;
         }
-        else
-        {
-            currentState = constructFlatRegex(currentState, regex);
-        }
+        connectStates(currentState, finalEntryState);
     }
-    connectStates(currentState, finalEntryState);
 }
 
 State* FiniteAutomation::constructFlatRegex(State* currentState, string subregex)
@@ -389,7 +382,7 @@ void FiniteAutomation::printFromState(State* currentState, unordered_map<State*,
 {
     if(currentState->isInitial)
     {
-        cout<< "[asteriskt->";
+        cout<< "[start->";
     }
     else if(currentState->isFinal)
     {

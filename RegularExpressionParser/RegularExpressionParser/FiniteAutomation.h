@@ -62,7 +62,6 @@ class FiniteAutomation{
     State* finalEntryState;
     State* finalState;
     State* currentState;
-    
     void constructInitialStates(bool setInitialStates, bool setFinalStates);
     StatesPair baseStone(string symbol);
     State* conjunction(State* currentState, string first, string second);
