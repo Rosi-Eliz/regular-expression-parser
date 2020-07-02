@@ -9,12 +9,13 @@
 #include <stdio.h>
 #include "FiniteAutomation.h"
 #include <string>
+#include <vector>
 #include <iostream>
 using namespace std;
 
 FiniteAutomation::FiniteAutomation(string regex, bool setInitialStates, bool setFinalStates) {
     
-    vector<string> result = topLevelDisjunctions("adsad|sad(asd|(ds|d*))|sd");
+    vector<string> result = topLevelDisjunctions(regex);
     
     constructInitialStates(setInitialStates, setFinalStates);
     this->regex = regex;
@@ -456,3 +457,58 @@ State* FiniteAutomation::plus(State* currentState, FiniteAutomation* automation)
     connectStates(automation->initialEntryState, automation->finalEntryState);
     return automation->finalState;
 }
+
+
+State* FiniteAutomation::existsPathway(State* fromState, string toSymbol, vector<Edge*>& visitedTransitions)
+{
+    State* resultState = nullptr;
+    for(Edge* e: fromState->outboundTransitions)
+    {
+        if(e-> symbol == toSymbol)
+            return e-> toState;
+        else if(e->symbol == string(1,EPSILON) && find(visitedTransitions.begin(), visitedTransitions.end(), e) == visitedTransitions.end())
+        {
+            visitedTransitions.push_back(e);
+            State* helpState = existsPathway(e->toState, toSymbol, visitedTransitions);
+            resultState = helpState != nullptr ? helpState : resultState;
+        }
+    }
+    return resultState;
+}
+
+bool FiniteAutomation::existsPathewayToFinalState(State* fromState, vector<Edge*>& visitedTransitions) const
+{
+    bool foundFinalStatePathway = false;
+    for(Edge* e: fromState->outboundTransitions)
+    {
+        if(e->toState->isFinal)
+            return true;
+       else if(e->symbol == string(1,EPSILON) && find(visitedTransitions.begin(), visitedTransitions.end(), e) == visitedTransitions.end())
+        {
+            visitedTransitions.push_back(e);
+            bool flag = existsPathewayToFinalState(e->toState, visitedTransitions);
+            foundFinalStatePathway = flag == true ? flag : foundFinalStatePathway;
+        }
+    }
+    return foundFinalStatePathway;
+}
+
+bool FiniteAutomation::isAccepted(string word)
+{
+    // Assignment supresses a compiler's warning
+    State* initialState = nullptr;
+    initialState = this->initialState;
+    
+    for(int i {0}; i < word.size(); i++)
+    {
+        string symbol = string(1, word[i]);
+        vector<Edge*> visitedTransitions;
+        initialState = existsPathway(initialState, symbol, visitedTransitions);
+        if(initialState == nullptr)
+            return false;
+        
+    }
+    vector<Edge*> visitedTransitions;
+    return existsPathewayToFinalState(initialState, visitedTransitions);
+}
+

@@ -14,9 +14,25 @@
             filePath = "RegularExpressionParser/FiniteAutomation.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "179"
-            endingLineNumber = "179"
-            landmarkName = "FiniteAutomation::helpConstructRegexBetaTest(subregex)"
+            startingLineNumber = "180"
+            endingLineNumber = "180"
+            landmarkName = "FiniteAutomation::constructRegex(subregex)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E875086E-E4C5-4825-B903-C7CEBC61C0FF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RegularExpressionParser/FiniteAutomation.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "94"
+            endingLineNumber = "94"
+            landmarkName = "FiniteAutomation::topLevelBrackets(input)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

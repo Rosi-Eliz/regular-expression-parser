@@ -57,11 +57,11 @@ struct State{
 
 class FiniteAutomation{
     string regex;
-    State* initialState;
-    State* initialEntryState;
-    State* finalEntryState;
-    State* finalState;
-    State* currentState;
+    State* initialState = nullptr;
+    State* initialEntryState = nullptr;
+    State* finalEntryState = nullptr;
+    State* finalState = nullptr;
+    State* currentState = nullptr;
     void constructInitialStates(bool setInitialStates, bool setFinalStates);
     StatesPair baseStone(string symbol);
     State* conjunction(State* currentState, string first, string second);
@@ -86,7 +86,9 @@ class FiniteAutomation{
     State* plus(State* currentState, FiniteAutomation* automation);
 public:
     FiniteAutomation(string regex, bool setInitialStates = false, bool setFinalStates = false);
-    bool wasAccepted(string regex);
+    State* existsPathway(State* fromState, string toSymbol, vector<Edge*>& visitedTransitions);
+    bool existsPathewayToFinalState(State* fromState, vector<Edge*>& visitedTransitions) const;
+    bool isAccepted(string word);
     State* getCurrentState() const;
     void printFromInitialState();
 
