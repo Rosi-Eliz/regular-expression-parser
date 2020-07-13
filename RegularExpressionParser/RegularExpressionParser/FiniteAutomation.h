@@ -86,11 +86,12 @@ class FiniteAutomation{
     State* plus(State* currentState, FiniteAutomation* automation);
 public:
     FiniteAutomation(string regex, bool setInitialStates = false, bool setFinalStates = false);
-    State* existsPathway(State* fromState, string toSymbol, vector<Edge*>& visitedTransitions);
-    bool existsPathewayToFinalState(State* fromState, vector<Edge*>& visitedTransitions) const;
+    bool existsPathway(State* fromState, string word, vector<State*>& visitedStates);
+    bool existsPathwayToFinalState(State* fromState, vector<Edge*>& visitedTransitions) const;
     bool isAccepted(string word);
     State* getCurrentState() const;
     void printFromInitialState();
+    
 
 };
     

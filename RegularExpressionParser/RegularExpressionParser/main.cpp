@@ -21,7 +21,7 @@ int main(int argc, const char * argv[]) {
         string word;
         cout<<"Enter a word you would like to verify: ";
         getline(cin, word);
-        //a+(c|b)*fg
+
         FiniteAutomation automation(input, true, true);
         cout<<"Epsilon - NFA regex Representation: "<<endl;
         automation.printFromInitialState();

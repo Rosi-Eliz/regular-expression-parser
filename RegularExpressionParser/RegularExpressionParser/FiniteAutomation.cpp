@@ -63,8 +63,9 @@ void FiniteAutomation::repetition(State* currentState, string subregex, FiniteAu
     State* oldCurrentState = currentState;
     switch(operation)
     {
-        case Plus:  currentState = plus(currentState, nestedAutomation); break;
-        case Asterisk:  currentState = asterisk(currentState, nestedAutomation); break;
+        case Plus: currentState = plus(currentState, nestedAutomation); break;
+        case Asterisk:
+            currentState = asterisk(currentState, nestedAutomation); break;
     }
     subregex = subregex.substr(1);
     if(subregex.size() > 0 && subregex[1] == OR)
@@ -423,7 +424,7 @@ void FiniteAutomation::printFromInitialState() {
     printFromState(initialState,  map);
 }
 
-//FA Operations
+// MARK: - FA Operations
 
 State* FiniteAutomation::conjunction(State* currentState, FiniteAutomation* automation1, FiniteAutomation* automation2)
 {
@@ -431,7 +432,6 @@ State* FiniteAutomation::conjunction(State* currentState, FiniteAutomation* auto
     connectStates(automation1->finalState, automation2->initialState);
     return automation2->finalState;
 }
-
 
 State* FiniteAutomation::disjunction(State* currentState, FiniteAutomation* automation1, FiniteAutomation* automation2)
 {
@@ -454,29 +454,41 @@ State* FiniteAutomation::asterisk(State* currentState, FiniteAutomation* automat
 State* FiniteAutomation::plus(State* currentState, FiniteAutomation* automation)
 {
     connectStates(currentState, automation->initialState);
-    connectStates(automation->initialEntryState, automation->finalEntryState);
+    connectStates(automation->finalEntryState, automation->initialEntryState);
     return automation->finalState;
 }
 
-
-State* FiniteAutomation::existsPathway(State* fromState, string toSymbol, vector<Edge*>& visitedTransitions)
+bool FiniteAutomation::existsPathway(State* fromState, string word, vector<State*>& visitedStates)
 {
-    State* resultState = nullptr;
-    for(Edge* e: fromState->outboundTransitions)
+    if(word.empty())
     {
-        if(e-> symbol == toSymbol)
-            return e-> toState;
-        else if(e->symbol == string(1,EPSILON) && find(visitedTransitions.begin(), visitedTransitions.end(), e) == visitedTransitions.end())
+        vector<Edge*> visitedTransitions;
+        return existsPathwayToFinalState(fromState, visitedTransitions);
+    }
+    
+    bool result = false;
+    string initialSymbol = word.substr(0,1);
+    string restString = word.substr(1);
+    for(Edge* currentStateEdge : fromState->outboundTransitions)
+    {
+        if(currentStateEdge->symbol == initialSymbol)
         {
-            visitedTransitions.push_back(e);
-            State* helpState = existsPathway(e->toState, toSymbol, visitedTransitions);
-            resultState = helpState != nullptr ? helpState : resultState;
+            vector<State*> resetVisitedStates;
+            result = result || existsPathway(currentStateEdge->getToState(), restString, resetVisitedStates);
+        }
+        else if(currentStateEdge->symbol == string(1,EPSILON))
+        {
+            if(find(visitedStates.begin(), visitedStates.end(), currentStateEdge->getToState()) == visitedStates.end())
+            {
+                visitedStates.push_back(currentStateEdge->getToState());
+                result = result || existsPathway(currentStateEdge->getToState(), word, visitedStates);
+            }
         }
     }
-    return resultState;
+    return result;
 }
 
-bool FiniteAutomation::existsPathewayToFinalState(State* fromState, vector<Edge*>& visitedTransitions) const
+bool FiniteAutomation::existsPathwayToFinalState(State* fromState, vector<Edge*>& visitedTransitions) const
 {
     bool foundFinalStatePathway = false;
     for(Edge* e: fromState->outboundTransitions)
@@ -486,7 +498,7 @@ bool FiniteAutomation::existsPathewayToFinalState(State* fromState, vector<Edge*
        else if(e->symbol == string(1,EPSILON) && find(visitedTransitions.begin(), visitedTransitions.end(), e) == visitedTransitions.end())
         {
             visitedTransitions.push_back(e);
-            bool flag = existsPathewayToFinalState(e->toState, visitedTransitions);
+            bool flag = existsPathwayToFinalState(e->getToState(), visitedTransitions);
             foundFinalStatePathway = flag == true ? flag : foundFinalStatePathway;
         }
     }
@@ -495,20 +507,10 @@ bool FiniteAutomation::existsPathewayToFinalState(State* fromState, vector<Edge*
 
 bool FiniteAutomation::isAccepted(string word)
 {
-    // Assignment supresses a compiler's warning
     State* initialState = nullptr;
     initialState = this->initialState;
     
-    for(int i {0}; i < word.size(); i++)
-    {
-        string symbol = string(1, word[i]);
-        vector<Edge*> visitedTransitions;
-        initialState = existsPathway(initialState, symbol, visitedTransitions);
-        if(initialState == nullptr)
-            return false;
-        
-    }
-    vector<Edge*> visitedTransitions;
-    return existsPathewayToFinalState(initialState, visitedTransitions);
+    vector<State*> visitedStates;
+    return existsPathway(initialState, word, visitedStates);
 }
 
