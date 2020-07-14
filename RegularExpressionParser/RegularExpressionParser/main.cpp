@@ -12,7 +12,25 @@ using namespace std;
 
 
 int main(int argc, const char * argv[]) {
-    FiniteAutomation automation("abc|sd|sd|dsdadsad|s|d|dsd");
     
+    while(!cin.eof())
+    {
+        string input;
+        cout<<"Please enter regex: ";
+        getline(cin,input);
+        string word;
+        cout<<"Enter a word you would like to verify: ";
+        getline(cin, word);
+
+        FiniteAutomation automation(input, true, true);
+        cout<<"Epsilon - NFA regex Representation: "<<endl;
+        automation.printFromInitialState();
+        
+        bool isAccepted = automation.isAccepted(word);
+        if(isAccepted)
+            cout<<"Accepted!"<<endl;
+        else
+            cout<<"Rejected!"<<endl;
+    }
     return 0;
 }
