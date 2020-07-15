@@ -7,11 +7,15 @@ A utility tool used for validating regular expressions corresponding to a provid
 The tool accepts a regular expression. Afterwards, a ``ε-NFA(Epsilon Non-Deterministic Finite Automata)`` is constructed based on the regular expression. The automata has the capability to check whether a certain word is accepted or rejected by traversing from an initial to a final state.
 
 #### Supported special symbols:
-`(` : Opening bracket\n
-`)` : Closing bracket\n
-`+` : Kleene plus\n
-`*` : Kleene star\n
-`|` : Logical `or` operator\n
+`(` : Opening bracket
+
+`)` : Closing bracket
+
+`+` : Kleene plus
+
+`*` : Kleene star
+
+`|` : Logical `or` operator
 
 ## Example
 
