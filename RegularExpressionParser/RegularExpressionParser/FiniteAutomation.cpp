@@ -13,10 +13,8 @@
 #include <iostream>
 using namespace std;
 
-FiniteAutomation::FiniteAutomation(string regex, bool setInitialStates, bool setFinalStates) {
-    
+FiniteAutomation::FiniteAutomation(string regex, bool setInitialStates, bool setFinalStates) {    
     vector<string> result = topLevelDisjunctions(regex);
-    
     constructInitialStates(setInitialStates, setFinalStates);
     this->regex = regex;
     constructRegex(regex);
