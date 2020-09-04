@@ -10,15 +10,16 @@
 #define FiniteAutomationAttributes_h
 #include <vector>
 #include <string>
+using namespace std;
 
 #define EPSILON '#'
 #define OR '|'
 #define ASTERISK '*'
 #define PLUS '+'
-using namespace std;
 
 enum Operation {Plus, Asterisk};
 class FiniteAutomation;
+
 struct Edge;
 
 struct State{

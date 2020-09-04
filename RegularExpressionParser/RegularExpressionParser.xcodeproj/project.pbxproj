@@ -10,10 +10,10 @@
 		803DD8AF24A3E83D00A876D5 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 803DD8AE24A3E83D00A876D5 /* main.cpp */; };
 		803DD8B724A3F1A100A876D5 /* FiniteAutomation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 803DD8B624A3F1A100A876D5 /* FiniteAutomation.cpp */; };
 		80D4595D24F90B0300B18F20 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80D4595C24F90B0300B18F20 /* main.cpp */; };
-		80D4596A25024D6800B18F20 /* RegularExpressionParserUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80D4596825024D6800B18F20 /* RegularExpressionParserUtilities.cpp */; };
-		80D4596B25024D6800B18F20 /* RegularExpressionParserUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80D4596825024D6800B18F20 /* RegularExpressionParserUtilities.cpp */; };
-		80D4596C2502539C00B18F20 /* FiniteAutomation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 803DD8B624A3F1A100A876D5 /* FiniteAutomation.cpp */; };
-		80D4596E250253EE00B18F20 /* RegularExpressionParserUtilitiesTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80D4596D250253EE00B18F20 /* RegularExpressionParserUtilitiesTests.cpp */; };
+		80D4597125025B7B00B18F20 /* RegularExpressionParserUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80D4597025025B7B00B18F20 /* RegularExpressionParserUtilities.cpp */; };
+		80D4597225025B7B00B18F20 /* RegularExpressionParserUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80D4597025025B7B00B18F20 /* RegularExpressionParserUtilities.cpp */; };
+		80D4597425025CCC00B18F20 /* RegularExpressionParserutilitiesTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80D4597325025CCC00B18F20 /* RegularExpressionParserutilitiesTests.cpp */; };
+		80D45976250265FD00B18F20 /* FiniteAutomation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 803DD8B624A3F1A100A876D5 /* FiniteAutomation.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,8 +47,8 @@
 		80D4596124F90B2B00B18F20 /* catch.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = catch.hh; sourceTree = "<group>"; };
 		80D4596525014B6C00B18F20 /* RegularExpressionParserUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RegularExpressionParserUtilities.h; sourceTree = "<group>"; };
 		80D4596625014D7100B18F20 /* FiniteAutomationAttributes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FiniteAutomationAttributes.h; sourceTree = "<group>"; };
-		80D4596825024D6800B18F20 /* RegularExpressionParserUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegularExpressionParserUtilities.cpp; sourceTree = "<group>"; };
-		80D4596D250253EE00B18F20 /* RegularExpressionParserUtilitiesTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegularExpressionParserUtilitiesTests.cpp; sourceTree = "<group>"; };
+		80D4597025025B7B00B18F20 /* RegularExpressionParserUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegularExpressionParserUtilities.cpp; sourceTree = "<group>"; };
+		80D4597325025CCC00B18F20 /* RegularExpressionParserutilitiesTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegularExpressionParserutilitiesTests.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,7 +72,7 @@
 		803DD8A224A3E83D00A876D5 = {
 			isa = PBXGroup;
 			children = (
-				80D4596F2502549000B18F20 /* RegularExpressionParserUtilities */,
+				80D4597525025E1900B18F20 /* RegularExpressionParserUtilities */,
 				803DD8AD24A3E83D00A876D5 /* RegularExpressionParser */,
 				80D4595B24F90B0300B18F20 /* RegularExpressionParserTests */,
 				803DD8AC24A3E83D00A876D5 /* Products */,
@@ -103,17 +103,17 @@
 			children = (
 				80D4596124F90B2B00B18F20 /* catch.hh */,
 				80D4595C24F90B0300B18F20 /* main.cpp */,
-				80D4596D250253EE00B18F20 /* RegularExpressionParserUtilitiesTests.cpp */,
+				80D4597325025CCC00B18F20 /* RegularExpressionParserutilitiesTests.cpp */,
 			);
 			path = RegularExpressionParserTests;
 			sourceTree = "<group>";
 		};
-		80D4596F2502549000B18F20 /* RegularExpressionParserUtilities */ = {
+		80D4597525025E1900B18F20 /* RegularExpressionParserUtilities */ = {
 			isa = PBXGroup;
 			children = (
-				80D4596825024D6800B18F20 /* RegularExpressionParserUtilities.cpp */,
-				80D4596625014D7100B18F20 /* FiniteAutomationAttributes.h */,
 				80D4596525014B6C00B18F20 /* RegularExpressionParserUtilities.h */,
+				80D4597025025B7B00B18F20 /* RegularExpressionParserUtilities.cpp */,
+				80D4596625014D7100B18F20 /* FiniteAutomationAttributes.h */,
 			);
 			path = RegularExpressionParserUtilities;
 			sourceTree = "<group>";
@@ -197,7 +197,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				803DD8AF24A3E83D00A876D5 /* main.cpp in Sources */,
-				80D4596A25024D6800B18F20 /* RegularExpressionParserUtilities.cpp in Sources */,
+				80D4597125025B7B00B18F20 /* RegularExpressionParserUtilities.cpp in Sources */,
 				803DD8B724A3F1A100A876D5 /* FiniteAutomation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -206,9 +206,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				80D4596E250253EE00B18F20 /* RegularExpressionParserUtilitiesTests.cpp in Sources */,
-				80D4596C2502539C00B18F20 /* FiniteAutomation.cpp in Sources */,
-				80D4596B25024D6800B18F20 /* RegularExpressionParserUtilities.cpp in Sources */,
+				80D4597425025CCC00B18F20 /* RegularExpressionParserutilitiesTests.cpp in Sources */,
+				80D45976250265FD00B18F20 /* FiniteAutomation.cpp in Sources */,
+				80D4597225025B7B00B18F20 /* RegularExpressionParserUtilities.cpp in Sources */,
 				80D4595D24F90B0300B18F20 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

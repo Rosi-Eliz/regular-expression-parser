@@ -1,5 +1,5 @@
 //
-//  RegularExpressionParserUtilitiesTests.cpp
+//  RegularExpressionParserutilitiesTests.cpp
 //  RegularExpressionParserTests
 //
 //  Created by Rosi-Eliz Dzhurkova on 04.09.20.
@@ -18,13 +18,12 @@ SCENARIO("Test for base stone functionality")
         {
             FiniteAutomation* fa = new FiniteAutomation(regex);
             StatesPair pair = RegularExpressionParserUtilities::baseStone(regex, fa);
-            THEN("Sub-automation should be created")
+            THEN("Sub - automation should be created")
             
             REQUIRE(pair.initialState != nullptr);
             REQUIRE(pair.finalState != nullptr);
-            REQUIRE(!pair.intialState->outboundTransitions().empty());
-            REQUIRE(pair.finalState->outboundTransitions().empty());
         }
         
     }
 }
+

@@ -9,8 +9,10 @@
 #ifndef FiniteAutomation_h
 #define FiniteAutomation_h
 #include <string>
+#include "FiniteAutomationAttributes.h"
 #include "RegularExpressionParserUtilities.h"
 #include <unordered_map>
+
 using namespace std;
 
 class FiniteAutomation{
@@ -37,9 +39,10 @@ public:
     bool isAccepted(string word);
     State* getCurrentState() const;
     void printFromInitialState();
+    
     State* getInitialState() const;
-    State* getFinalState() const;
     State* getInitialEntryState() const;
+    State* getFinalState() const;
     State* getFinalEntryState() const;
 };
     

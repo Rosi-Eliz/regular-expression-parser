@@ -7,8 +7,8 @@
 //
 
 #include "RegularExpressionParserUtilities.h"
-#include <string>
 #include "FiniteAutomation.h"
+using namespace std;
 
 void RegularExpressionParserUtilities::connectStates(State* fromState, State* toState)
 {
@@ -117,14 +117,14 @@ State* RegularExpressionParserUtilities::plus(State* currentState, string word, 
 }
 
 // MARK: - FA Operations
- 
+
 State* RegularExpressionParserUtilities::faConjunction(State* currentState, FiniteAutomation* automation1, FiniteAutomation* automation2)
 {
     RegularExpressionParserUtilities::connectStates(currentState, automation1->getInitialState());
     RegularExpressionParserUtilities::connectStates(automation1->getFinalState(), automation2->getInitialState());
     return automation2->getFinalState();
 }
- 
+
 State* RegularExpressionParserUtilities::faDisjunction(State* currentState, FiniteAutomation* automation1, FiniteAutomation* automation2)
 {
     RegularExpressionParserUtilities::connectStates(currentState, automation1->getInitialState());
@@ -149,4 +149,3 @@ State* RegularExpressionParserUtilities::faPlus(State* currentState, FiniteAutom
     RegularExpressionParserUtilities::connectStates(automation->getFinalEntryState(), automation->getInitialEntryState());
     return automation->getFinalState();
 }
-

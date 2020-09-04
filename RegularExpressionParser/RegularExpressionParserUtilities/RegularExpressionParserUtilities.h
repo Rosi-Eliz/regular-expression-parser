@@ -9,8 +9,6 @@
 #ifndef RegularExpressionParserUtilities_h
 #define RegularExpressionParserUtilities_h
 #include "FiniteAutomationAttributes.h"
-class FiniteAutomation;
-
 using namespace std;
 
 class RegularExpressionParserUtilities {
@@ -22,14 +20,12 @@ public:
     static State* asterisk(State* currentState, string word, FiniteAutomation* automation);
     static State* plus(State* currentState, string word, FiniteAutomation* automation);
     
-    //FA Operations
+    //MARK: FA Operations
     
     static State* faConjunction(State* currentState, FiniteAutomation* automation1, FiniteAutomation* automation2);
     static State* faDisjunction(State* currentState, FiniteAutomation* automation1, FiniteAutomation* automation2);
     static State* faAsterisk(State* currentState, FiniteAutomation* automation);
     static State* faPlus(State* currentState, FiniteAutomation* automation);
 };
-
-
 
 #endif /* RegularExpressionParserUtilities_h */

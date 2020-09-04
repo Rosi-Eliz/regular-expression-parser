@@ -319,6 +319,7 @@ void FiniteAutomation::printFromInitialState() {
     printFromState(initialState,  map);
 }
 
+
 bool FiniteAutomation::existsPathway(State* fromState, string word, vector<State*>& visitedStates)
 {
     if(word.empty())
@@ -379,18 +380,15 @@ State* FiniteAutomation::getInitialState() const
 {
     return initialState;
 }
-
-State* FiniteAutomation::getFinalState() const
-{
-    return finalState;
-}
-
-State* FiniteAutomation::getInitialEntryState() const
+   State* FiniteAutomation::getInitialEntryState() const
 {
     return initialEntryState;
 }
-
-State* FiniteAutomation::getFinalEntryState() const
+   State* FiniteAutomation::getFinalState() const
+{
+    return finalState;
+}
+   State* FiniteAutomation::getFinalEntryState() const
 {
     return finalEntryState;
 }
