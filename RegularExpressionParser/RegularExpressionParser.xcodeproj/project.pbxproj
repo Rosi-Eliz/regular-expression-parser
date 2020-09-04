@@ -9,10 +9,24 @@
 /* Begin PBXBuildFile section */
 		803DD8AF24A3E83D00A876D5 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 803DD8AE24A3E83D00A876D5 /* main.cpp */; };
 		803DD8B724A3F1A100A876D5 /* FiniteAutomation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 803DD8B624A3F1A100A876D5 /* FiniteAutomation.cpp */; };
+		80D4595D24F90B0300B18F20 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80D4595C24F90B0300B18F20 /* main.cpp */; };
+		80D4596A25024D6800B18F20 /* RegularExpressionParserUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80D4596825024D6800B18F20 /* RegularExpressionParserUtilities.cpp */; };
+		80D4596B25024D6800B18F20 /* RegularExpressionParserUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80D4596825024D6800B18F20 /* RegularExpressionParserUtilities.cpp */; };
+		80D4596C2502539C00B18F20 /* FiniteAutomation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 803DD8B624A3F1A100A876D5 /* FiniteAutomation.cpp */; };
+		80D4596E250253EE00B18F20 /* RegularExpressionParserUtilitiesTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80D4596D250253EE00B18F20 /* RegularExpressionParserUtilitiesTests.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		803DD8A924A3E83D00A876D5 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		80D4595824F90B0200B18F20 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -28,10 +42,24 @@
 		803DD8AE24A3E83D00A876D5 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		803DD8B524A3EF1900A876D5 /* FiniteAutomation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FiniteAutomation.h; sourceTree = "<group>"; };
 		803DD8B624A3F1A100A876D5 /* FiniteAutomation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FiniteAutomation.cpp; sourceTree = "<group>"; };
+		80D4595A24F90B0200B18F20 /* RegularExpressionParserTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RegularExpressionParserTests; sourceTree = BUILT_PRODUCTS_DIR; };
+		80D4595C24F90B0300B18F20 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		80D4596124F90B2B00B18F20 /* catch.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = catch.hh; sourceTree = "<group>"; };
+		80D4596525014B6C00B18F20 /* RegularExpressionParserUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RegularExpressionParserUtilities.h; sourceTree = "<group>"; };
+		80D4596625014D7100B18F20 /* FiniteAutomationAttributes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FiniteAutomationAttributes.h; sourceTree = "<group>"; };
+		80D4596825024D6800B18F20 /* RegularExpressionParserUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegularExpressionParserUtilities.cpp; sourceTree = "<group>"; };
+		80D4596D250253EE00B18F20 /* RegularExpressionParserUtilitiesTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegularExpressionParserUtilitiesTests.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		803DD8A824A3E83D00A876D5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80D4595724F90B0200B18F20 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -44,7 +72,9 @@
 		803DD8A224A3E83D00A876D5 = {
 			isa = PBXGroup;
 			children = (
+				80D4596F2502549000B18F20 /* RegularExpressionParserUtilities */,
 				803DD8AD24A3E83D00A876D5 /* RegularExpressionParser */,
+				80D4595B24F90B0300B18F20 /* RegularExpressionParserTests */,
 				803DD8AC24A3E83D00A876D5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -53,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				803DD8AB24A3E83D00A876D5 /* RegularExpressionParser */,
+				80D4595A24F90B0200B18F20 /* RegularExpressionParserTests */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -65,6 +96,26 @@
 				803DD8B624A3F1A100A876D5 /* FiniteAutomation.cpp */,
 			);
 			path = RegularExpressionParser;
+			sourceTree = "<group>";
+		};
+		80D4595B24F90B0300B18F20 /* RegularExpressionParserTests */ = {
+			isa = PBXGroup;
+			children = (
+				80D4596124F90B2B00B18F20 /* catch.hh */,
+				80D4595C24F90B0300B18F20 /* main.cpp */,
+				80D4596D250253EE00B18F20 /* RegularExpressionParserUtilitiesTests.cpp */,
+			);
+			path = RegularExpressionParserTests;
+			sourceTree = "<group>";
+		};
+		80D4596F2502549000B18F20 /* RegularExpressionParserUtilities */ = {
+			isa = PBXGroup;
+			children = (
+				80D4596825024D6800B18F20 /* RegularExpressionParserUtilities.cpp */,
+				80D4596625014D7100B18F20 /* FiniteAutomationAttributes.h */,
+				80D4596525014B6C00B18F20 /* RegularExpressionParserUtilities.h */,
+			);
+			path = RegularExpressionParserUtilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -87,6 +138,23 @@
 			productReference = 803DD8AB24A3E83D00A876D5 /* RegularExpressionParser */;
 			productType = "com.apple.product-type.tool";
 		};
+		80D4595924F90B0200B18F20 /* RegularExpressionParserTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 80D4596024F90B0300B18F20 /* Build configuration list for PBXNativeTarget "RegularExpressionParserTests" */;
+			buildPhases = (
+				80D4595624F90B0200B18F20 /* Sources */,
+				80D4595724F90B0200B18F20 /* Frameworks */,
+				80D4595824F90B0200B18F20 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RegularExpressionParserTests;
+			productName = RegularExpressionParserTests;
+			productReference = 80D4595A24F90B0200B18F20 /* RegularExpressionParserTests */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -98,6 +166,9 @@
 				TargetAttributes = {
 					803DD8AA24A3E83D00A876D5 = {
 						CreatedOnToolsVersion = 11.5;
+					};
+					80D4595924F90B0200B18F20 = {
+						CreatedOnToolsVersion = 11.6;
 					};
 				};
 			};
@@ -115,6 +186,7 @@
 			projectRoot = "";
 			targets = (
 				803DD8AA24A3E83D00A876D5 /* RegularExpressionParser */,
+				80D4595924F90B0200B18F20 /* RegularExpressionParserTests */,
 			);
 		};
 /* End PBXProject section */
@@ -125,7 +197,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				803DD8AF24A3E83D00A876D5 /* main.cpp in Sources */,
+				80D4596A25024D6800B18F20 /* RegularExpressionParserUtilities.cpp in Sources */,
 				803DD8B724A3F1A100A876D5 /* FiniteAutomation.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80D4595624F90B0200B18F20 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				80D4596E250253EE00B18F20 /* RegularExpressionParserUtilitiesTests.cpp in Sources */,
+				80D4596C2502539C00B18F20 /* FiniteAutomation.cpp in Sources */,
+				80D4596B25024D6800B18F20 /* RegularExpressionParserUtilities.cpp in Sources */,
+				80D4595D24F90B0300B18F20 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,6 +349,26 @@
 			};
 			name = Release;
 		};
+		80D4595E24F90B0300B18F20 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = M6SMSSUJS8;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		80D4595F24F90B0300B18F20 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = M6SMSSUJS8;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -282,6 +386,15 @@
 			buildConfigurations = (
 				803DD8B324A3E83D00A876D5 /* Debug */,
 				803DD8B424A3E83D00A876D5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		80D4596024F90B0300B18F20 /* Build configuration list for PBXNativeTarget "RegularExpressionParserTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				80D4595E24F90B0300B18F20 /* Debug */,
+				80D4595F24F90B0300B18F20 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
