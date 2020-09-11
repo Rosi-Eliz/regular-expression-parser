@@ -13,15 +13,16 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     
     //Example
-    string regex = "((c|b)+b)*gf";
+    string regex = "a|b";
     FiniteAutomation automation(regex, true, true);
-    string word = "ccbbcbcbcbbcbgf";
+    automation.printFromInitialState();
+//    string word = "ccbbcbcbcbbcbgf";
     
-    bool isAccepted = automation.isAccepted(word);
-    if(isAccepted)
-        cout<<"Accepted!"<<endl;
-    else
-        cout<<"Rejected!"<<endl;
+//    bool isAccepted = automation.isAccepted(word);
+//    if(isAccepted)
+//        cout<<"Accepted!"<<endl;
+//    else
+//        cout<<"Rejected!"<<endl;
 
     return 0;
 }

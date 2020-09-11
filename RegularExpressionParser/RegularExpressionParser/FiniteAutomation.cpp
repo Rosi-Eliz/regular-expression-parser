@@ -31,6 +31,7 @@ void FiniteAutomation::constructInitialStates(bool setInitialStates, bool setFin
     Edge* finalEpsilonTransition = new Edge(string(1, EPSILON), finalState);
     initialState->setOutboundTransition(initialEpsilonTransition);
     finalEntryState->setOutboundTransition(finalEpsilonTransition);
+    currentState = initialEntryState;
 }
 
 void FiniteAutomation::repetition(State* currentState, string subregex, FiniteAutomation* nestedAutomation,Operation operation)
@@ -275,6 +276,43 @@ State* FiniteAutomation::getCurrentState() const
     return currentState;
 }
 
+string FiniteAutomation::assignPrintToString(State* currentState, string& result, unordered_map<State*, int>& map)
+{
+    if(currentState->isInitial)
+       {
+           result += "[start->";
+       }
+       else if(currentState->isFinal)
+       {
+           result += "(" + to_string(map[currentState]) + ")->end]";
+           return result;
+       }
+       vector<State*> recursiveBranchingStates;
+       for(Edge* edge : currentState->outboundTransitions)
+       {
+           State* toState = edge->toState;
+           int edgeNumber = 0;
+           if (map.find(toState)==map.end())
+           {
+               edgeNumber = static_cast<int>(map.size()) + 1;
+               map[toState] = edgeNumber;
+               recursiveBranchingStates.push_back(toState);
+           }
+           else
+           {
+               edgeNumber = map[toState];
+           }
+           result += "(" + to_string(map[currentState]) + ")-" + edge->symbol + "->(" + to_string(edgeNumber) + ")";
+       }
+       result+= "] [";
+       
+       for(State* state : recursiveBranchingStates)
+       {
+           assignPrintToString(state, result, map);
+       }
+    return result;
+}
+
 void FiniteAutomation::printFromState(State* currentState, unordered_map<State*, int>& map)
 {
     if(currentState->isInitial)
@@ -316,7 +354,7 @@ void FiniteAutomation::printFromState(State* currentState, unordered_map<State*,
 void FiniteAutomation::printFromInitialState() {
     unordered_map<State*, int> map;
     map[initialState] = 1;
-    printFromState(initialState,  map);
+    printFromState(initialState, map);
 }
 
 

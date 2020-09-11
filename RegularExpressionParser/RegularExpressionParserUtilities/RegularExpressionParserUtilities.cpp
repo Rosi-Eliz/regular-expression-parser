@@ -38,7 +38,7 @@ State* RegularExpressionParserUtilities::conjunction(State* currentState, string
     StatesPair firstStonePair = baseStone(first, automation);
     Edge* initialConnectingEdge = new Edge(string(1, EPSILON), firstStonePair.initialState);
     currentState->setOutboundTransition(initialConnectingEdge);
-    
+
     StatesPair secondStonePair = baseStone(second, automation);
     connectStates(firstStonePair.finalState, secondStonePair.initialState);
     
