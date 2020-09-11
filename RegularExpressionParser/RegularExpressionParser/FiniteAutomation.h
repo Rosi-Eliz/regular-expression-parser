@@ -38,6 +38,7 @@ public:
     bool existsPathwayToFinalState(State* fromState, vector<Edge*>& visitedTransitions) const;
     bool isAccepted(string word);
     State* getCurrentState() const;
+    string assignPrintToString(State* currentState, string& result, unordered_map<State*, int>& map);
     void printFromInitialState();
     
     State* getInitialState() const;
