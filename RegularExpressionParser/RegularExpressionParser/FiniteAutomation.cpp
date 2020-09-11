@@ -18,7 +18,6 @@ FiniteAutomation::FiniteAutomation(string regex, bool setInitialStates, bool set
     constructInitialStates(setInitialStates, setFinalStates);
     this->regex = regex;
     constructRegex(regex);
-    
 }
 
 void FiniteAutomation::constructInitialStates(bool setInitialStates, bool setFinalStates)
@@ -34,51 +33,29 @@ void FiniteAutomation::constructInitialStates(bool setInitialStates, bool setFin
     finalEntryState->setOutboundTransition(finalEpsilonTransition);
 }
 
-StatesPair FiniteAutomation::baseStone(string symbol)
-{
-    State* initialState = new State(false, false, this);
-    State* finalState = new State(false, false, this);
-    State* symbolStartState = new State(false, false, this);
-    State* symbolEndState = new State(false, false, this);
-    Edge* inboundEpsilonTransition = new Edge(string(1, EPSILON), symbolStartState);
-    Edge* outboundEpsilonTransition = new Edge(string(1, EPSILON), finalState);
-    Edge* symbolEdge = new Edge(symbol, symbolEndState);
-    initialState->setOutboundTransition(inboundEpsilonTransition);
-    symbolStartState->setOutboundTransition(symbolEdge);
-    symbolEndState->setOutboundTransition(outboundEpsilonTransition);
-    
-    return StatesPair(initialState, finalState);
-}
-
-void FiniteAutomation::connectStates(State* fromState, State* toState)
-{
-    Edge* connectingEdge = new Edge(string(1, EPSILON), toState);
-    fromState->setOutboundTransition(connectingEdge);
-}
-
 void FiniteAutomation::repetition(State* currentState, string subregex, FiniteAutomation* nestedAutomation,Operation operation)
 {
     State* oldCurrentState = currentState;
     switch(operation)
     {
-        case Plus: currentState = plus(currentState, nestedAutomation); break;
+        case Plus: currentState = RegularExpressionParserUtilities::faPlus(currentState, nestedAutomation); break;
         case Asterisk:
-            currentState = asterisk(currentState, nestedAutomation); break;
+            currentState = RegularExpressionParserUtilities::faAsterisk(currentState, nestedAutomation); break;
     }
     subregex = subregex.substr(1);
     if(subregex.size() > 0 && subregex[1] == OR)
     {
         FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
-        connectStates(oldCurrentState, rightAutomation->initialState);
+        RegularExpressionParserUtilities::connectStates(oldCurrentState, rightAutomation->initialState);
         State* finalConnectingState = new State(false, false);
-        connectStates(currentState, finalConnectingState);
-        connectStates(rightAutomation->finalState, finalConnectingState);
+        RegularExpressionParserUtilities::connectStates(currentState, finalConnectingState);
+        RegularExpressionParserUtilities::connectStates(rightAutomation->finalState, finalConnectingState);
         currentState = finalConnectingState;
     }
     else if(subregex.size() > 0)
     {
         FiniteAutomation* rightAutomation = new FiniteAutomation(subregex);
-        connectStates(currentState, rightAutomation->initialState);
+        RegularExpressionParserUtilities::connectStates(currentState, rightAutomation->initialState);
         currentState = rightAutomation->finalState;
     }
 }
@@ -160,10 +137,10 @@ void FiniteAutomation::constructRegex(string subregex)
         for(int i{0}; i < disjunctions.size(); i++)
         {
             FiniteAutomation* automation = new FiniteAutomation(disjunctions[i]);
-            connectStates(initialEntryState, automation->initialState);
-            connectStates(automation->finalState, commonFinalState);
+            RegularExpressionParserUtilities::connectStates(initialEntryState, automation->initialState);
+            RegularExpressionParserUtilities::connectStates(automation->finalState, commonFinalState);
         }
-        connectStates(commonFinalState, finalEntryState);
+        RegularExpressionParserUtilities::connectStates(commonFinalState, finalEntryState);
         currentState = commonFinalState;
     }
     else
@@ -181,17 +158,17 @@ void FiniteAutomation::constructRegex(string subregex)
                     
                     if(i < subregex.size() - 1 && subregex[i + 1] == PLUS)
                     {
-                        currentState = plus(currentState, automation);
+                        currentState = RegularExpressionParserUtilities::faPlus(currentState, automation);
                         i++;
                     }
                     else if(i < subregex.size() - 1 && subregex[i + 1] == ASTERISK)
                     {
-                        currentState = asterisk(currentState, automation);
+                        currentState = RegularExpressionParserUtilities::faAsterisk(currentState, automation);
                         i++;
                     }
                     else
                     {
-                        connectStates(currentState, automation->initialState);
+                        RegularExpressionParserUtilities::connectStates(currentState, automation->initialState);
                         currentState = automation->finalState;
                     }
                     break;
@@ -202,24 +179,26 @@ void FiniteAutomation::constructRegex(string subregex)
                     {
                         if(subregex[i + 1] == PLUS)
                         {
-                            currentState = plus(currentState, string(1,subregex[i]));
+                            currentState =  RegularExpressionParserUtilities::plus(currentState, string(1,subregex[i]), this);
                             i++;
                             break;
                         }
                         if(subregex[i + 1] == ASTERISK)
                         {
-                            currentState = asterisk(currentState, string(1,subregex[i]));
+                            currentState =  RegularExpressionParserUtilities::asterisk(currentState, string(1,subregex[i]), this);
                             i++;
                             break;
                         }
                     }
-                    StatesPair pair = baseStone(string(1,subregex[i]));
-                    connectStates(currentState, pair.initialState);
+                    StatesPair pair =  RegularExpressionParserUtilities::
+                    
+                    RegularExpressionParserUtilities::baseStone(string(1,subregex[i]), this);
+                    RegularExpressionParserUtilities::connectStates(currentState, pair.initialState);
                     currentState = pair.finalState;
                 }
             }
         }
-        connectStates(currentState, finalEntryState);
+        RegularExpressionParserUtilities::connectStates(currentState, finalEntryState);
     }
 }
 
@@ -231,8 +210,8 @@ State* FiniteAutomation::constructFlatRegex(State* currentState, string subregex
         {
             if(i == subregex.size() - 1) {
                 string copy = string(1, subregex[i]);
-                StatesPair pair = baseStone(copy);
-                connectStates(currentState, pair.initialState);
+                StatesPair pair =  RegularExpressionParserUtilities::baseStone(copy, this);
+                RegularExpressionParserUtilities::connectStates(currentState, pair.initialState);
                 currentState = pair.finalState;
                 break;
             }
@@ -240,12 +219,13 @@ State* FiniteAutomation::constructFlatRegex(State* currentState, string subregex
             if(subregex[i+1] == PLUS)
             {
                 string copy = string(1, subregex[i]);
-                currentState  = plus(currentState, copy);
+                currentState  = RegularExpressionParserUtilities::plus(currentState, copy, this);
             }
+            
             else if(subregex[i+1] == ASTERISK)
             {
                 string copy = string(1, subregex[i]);
-                currentState  = asterisk(currentState, copy);
+                currentState  = RegularExpressionParserUtilities::asterisk(currentState, copy, this);
             }
             else
             {
@@ -254,27 +234,27 @@ State* FiniteAutomation::constructFlatRegex(State* currentState, string subregex
                 if(regex.size() > i+2) {
                     switch (subregex[i+2]) {
                         case PLUS: {
-                            StatesPair pair = baseStone(copy1);
-                            connectStates(currentState, pair.initialState);
-                            currentState = plus(pair.finalState, copy2);
+                            StatesPair pair =  RegularExpressionParserUtilities::baseStone(copy1, this);
+                            RegularExpressionParserUtilities::connectStates(currentState, pair.initialState);
+                            currentState = RegularExpressionParserUtilities::plus(pair.finalState, copy2, this);
                             i++;
                             break;
                         }
                         case ASTERISK: {
-                            StatesPair pair = baseStone(copy1);
-                            connectStates(currentState, pair.initialState);
-                            currentState = asterisk(pair.finalState, copy2);
+                            StatesPair pair =  RegularExpressionParserUtilities::baseStone(copy1, this);
+                            RegularExpressionParserUtilities::connectStates(currentState, pair.initialState);
+                            currentState = RegularExpressionParserUtilities::asterisk(pair.finalState, copy2, this);
                             i++;
                             break;
                         }
                         default:
-                            currentState = conjunction(currentState, copy1, copy2);
+                            currentState =  RegularExpressionParserUtilities::conjunction(currentState, copy1, copy2, this);
                             break;
                     }
                 }
                 else
                 {
-                    currentState = conjunction(currentState, copy1, copy2);
+                    currentState =  RegularExpressionParserUtilities::conjunction(currentState, copy1, copy2, this);
                 }
             }
             i++;
@@ -282,95 +262,12 @@ State* FiniteAutomation::constructFlatRegex(State* currentState, string subregex
     }
     else
     {
-        StatesPair pair = baseStone(subregex);
-        connectStates(currentState, pair.initialState);
+        StatesPair pair =  RegularExpressionParserUtilities::baseStone(subregex, this);
+        RegularExpressionParserUtilities::connectStates(currentState, pair.initialState);
         currentState = pair.finalState;
         
     }
     return currentState;
-}
-State* FiniteAutomation::conjunction(State* currentState, string first, string second)
-{
-    StatesPair firstStonePair = baseStone(first);
-    Edge* initialConnectingEdge = new Edge(string(1, EPSILON), firstStonePair.initialState);
-    currentState->setOutboundTransition(initialConnectingEdge);
-    
-    StatesPair secondStonePair = baseStone(second);
-    connectStates(firstStonePair.finalState, secondStonePair.initialState);
-    
-    return secondStonePair.finalState;
-}
-
-State* FiniteAutomation::disjunction(State* currentState, string first, string second){
-    StatesPair firstStonePair = baseStone(first);
-    State* firstStoneInitialState = firstStonePair.initialState;
-    State* firstStoneFinalState = firstStonePair.finalState;
-    
-    StatesPair secondStonePair = baseStone(second);
-    State* secondStoneInitialState = secondStonePair.initialState;
-    State* secondStoneFinalState = secondStonePair.finalState;
-    
-    State* connectingState = new State(false, false, this);
-    Edge* connectingEdge = new Edge(string(1, EPSILON), connectingState);
-    currentState->setOutboundTransition(connectingEdge);
-    
-    Edge* firstEpsilonTransition = new Edge (string(1, EPSILON), firstStoneInitialState);
-    Edge* secondEpsilonTransition = new Edge(string(1, EPSILON), secondStoneInitialState);
-    connectingState->setOutboundTransition(firstEpsilonTransition);
-    connectingState->setOutboundTransition(secondEpsilonTransition);
-    
-    State* connectingFinalState = new State(false, false, this);
-    Edge* firstFinalTransition = new Edge(string(1, EPSILON), connectingFinalState);
-    Edge* secondFinalTransition = new Edge(string(1, EPSILON), connectingFinalState);
-    firstStoneFinalState->setOutboundTransition(firstFinalTransition);
-    secondStoneFinalState->setOutboundTransition(secondFinalTransition);
-    
-    State* finalState = new State(false, false, this);
-    Edge* finalTransition = new Edge(string(1, EPSILON), finalState);
-    connectingFinalState->setOutboundTransition(finalTransition);
-    
-    return finalState;
-}
-
-State* FiniteAutomation::asterisk(State* currentState, string word){
-    
-    StatesPair pair = baseStone(word);
-    State* symbolInitialState = pair.initialState;
-    State* symbolFinalState = pair.finalState;
-    
-    Edge* connectingEdge = new Edge(string(1, EPSILON), symbolInitialState);
-    currentState->setOutboundTransition(connectingEdge);
-    
-    Edge* returnEdge = new Edge(string(1, EPSILON), symbolInitialState);
-    symbolFinalState->setOutboundTransition(returnEdge);
-    Edge* skipEdge = new Edge(string(1, EPSILON), symbolFinalState);
-    symbolInitialState->setOutboundTransition(skipEdge);
-    
-    
-    State* finalState = new State(false, false, this);
-    Edge* finalEdge = new Edge(string(1, EPSILON), finalState);
-    symbolFinalState->setOutboundTransition(finalEdge);
-    
-    return finalState;
-}
-
-State* FiniteAutomation::plus(State* currentState, string word){
-    
-    StatesPair pair = baseStone(word);
-    State* symbolInitialState = pair.initialState;
-    State* symbolFinalState = pair.finalState;
-    
-    Edge* connectingEdge = new Edge(string(1, EPSILON), symbolInitialState);
-    currentState->setOutboundTransition(connectingEdge);
-    
-    Edge* returnEdge = new Edge(string(1, EPSILON), symbolInitialState);
-    symbolFinalState->setOutboundTransition(returnEdge);
-    
-    State* finalState = new State(false, false, this);
-    Edge* finalEdge = new Edge(string(1, EPSILON), finalState);
-    symbolFinalState->setOutboundTransition(finalEdge);
-    
-    return finalState;
 }
 
 State* FiniteAutomation::getCurrentState() const
@@ -422,39 +319,6 @@ void FiniteAutomation::printFromInitialState() {
     printFromState(initialState,  map);
 }
 
-// MARK: - FA Operations
-
-State* FiniteAutomation::conjunction(State* currentState, FiniteAutomation* automation1, FiniteAutomation* automation2)
-{
-    connectStates(currentState, automation1->initialState);
-    connectStates(automation1->finalState, automation2->initialState);
-    return automation2->finalState;
-}
-
-State* FiniteAutomation::disjunction(State* currentState, FiniteAutomation* automation1, FiniteAutomation* automation2)
-{
-    connectStates(currentState, automation1->initialState);
-    connectStates(currentState, automation2->initialState);
-    State* finalConnectingState = new State(false, false);
-    connectStates(automation1->finalState, finalConnectingState);
-    connectStates(automation2->finalState, finalConnectingState);
-    return finalConnectingState;
-}
-
-State* FiniteAutomation::asterisk(State* currentState, FiniteAutomation* automation)
-{
-    connectStates(currentState, automation->initialState);
-    connectStates(automation->initialEntryState, automation->finalEntryState);
-    connectStates(automation->finalEntryState, automation->initialEntryState);
-    return automation->finalState;
-}
-
-State* FiniteAutomation::plus(State* currentState, FiniteAutomation* automation)
-{
-    connectStates(currentState, automation->initialState);
-    connectStates(automation->finalEntryState, automation->initialEntryState);
-    return automation->finalState;
-}
 
 bool FiniteAutomation::existsPathway(State* fromState, string word, vector<State*>& visitedStates)
 {
@@ -512,3 +376,19 @@ bool FiniteAutomation::isAccepted(string word)
     return existsPathway(initialState, word, visitedStates);
 }
 
+State* FiniteAutomation::getInitialState() const
+{
+    return initialState;
+}
+   State* FiniteAutomation::getInitialEntryState() const
+{
+    return initialEntryState;
+}
+   State* FiniteAutomation::getFinalState() const
+{
+    return finalState;
+}
+   State* FiniteAutomation::getFinalEntryState() const
+{
+    return finalEntryState;
+}
